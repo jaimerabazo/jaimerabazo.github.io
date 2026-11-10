@@ -162,7 +162,7 @@ export default function Logbook() {
                   {q.title}
                   {q.href && (
                     <>
-                      <span aria-hidden className="ml-2 text-base text-ink-400 group-hover:text-pen">↗</span>
+                      <span aria-hidden className="ml-2 inline-block text-base text-ink-400 transition-[color,transform] duration-200 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-pen">↗</span>
                       <span className="sr-only"> (opens in a new tab)</span>
                     </>
                   )}
@@ -171,11 +171,11 @@ export default function Logbook() {
               </>
             );
             const cls =
-              "group relative block h-full rounded-2xl border border-ink-900/10 bg-paper-light p-6 transition-transform";
+              "group relative block h-full rounded-2xl border border-ink-900/10 bg-paper-light p-6 transition-colors duration-200";
             return (
               <Reveal key={q.title} delay={i * 0.06} className="h-full">
                 {q.href ? (
-                  <a href={q.href} target="_blank" rel="noreferrer" className={`${cls} hover:-rotate-1`}>
+                  <a href={q.href} target="_blank" rel="noreferrer" className={`${cls} hover:border-ink-900/25`}>
                     {body}
                   </a>
                 ) : (

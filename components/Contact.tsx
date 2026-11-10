@@ -381,9 +381,18 @@ export default function Contact() {
             </a>
             <button
               onClick={copyEmail}
-              className="inline-flex items-center rounded-full border border-ink-900/20 px-5 py-3 text-sm font-medium text-ink-900 hover:border-ink-900/40 transition-colors"
+              className="inline-grid rounded-full border border-ink-900/20 px-5 py-3 text-sm font-medium text-ink-900 hover:border-ink-900/40 transition-colors"
             >
-              {copy === "copied" ? "Copied ✓" : "Copy email"}
+              {/* Both labels share one grid cell, so the button keeps the wider one's width. */}
+              <span className={`col-start-1 row-start-1 transition-opacity duration-200 ${copy === "copied" ? "opacity-0" : ""}`}>Copy email</span>
+              <span aria-hidden className={`col-start-1 row-start-1 inline-flex items-center justify-center gap-1.5 transition-opacity duration-200 ${copy === "copied" ? "" : "opacity-0"}`}>
+                Copied
+                {copy === "copied" && (
+                  <svg viewBox="0 0 16 16" className="h-3.5 w-3.5 text-pen" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3 8.5 6.5 12 13 4.5" className="check-draw" />
+                  </svg>
+                )}
+              </span>
             </button>
             <span role="status" aria-live="polite" className={copy === "failed" ? "text-sm text-ink-600" : "sr-only"}>
               {copy === "copied" && "Email copied to clipboard"}

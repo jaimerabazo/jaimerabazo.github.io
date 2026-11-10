@@ -353,7 +353,7 @@ export default function InflightEntertainment() {
                         aria-label={playing ? "Pause preview" : "Play 30-second preview"}
                         onClick={toggle}
                         disabled={!song.preview}
-                        className="grid h-12 w-12 place-items-center rounded-full bg-paper-light text-livery transition-transform hover:scale-105 active:scale-95 disabled:opacity-40"
+                        className="grid h-12 w-12 place-items-center rounded-full bg-paper-light text-livery transition-[background-color,box-shadow] duration-150 ease-out hover:bg-white active:shadow-[inset_0_2px_5px_rgba(21,21,21,0.3)] disabled:opacity-40"
                       >
                         <PlayIcon playing={playing} />
                       </button>

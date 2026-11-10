@@ -90,8 +90,8 @@ export default function Navbar() {
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-        className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
-          scrolled ? "backdrop-blur-md bg-paper/80 border-b border-ink-900/10" : "bg-transparent"
+        className={`fixed inset-x-0 top-0 z-50 border-b transition-[background-color,border-color,backdrop-filter] duration-500 ${
+          scrolled ? "backdrop-blur-md bg-paper/80 border-ink-900/10" : "bg-transparent border-transparent"
         }`}
       >
         <nav className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3.5 md:px-10">
