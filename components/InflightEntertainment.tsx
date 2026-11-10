@@ -25,6 +25,42 @@ const TABS: { id: Tab; label: string }[] = [
 const mmss = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 // "★★★★½" from a 0.5–5 rating.
 const stars = (r: number | null) => (r ? "★".repeat(Math.floor(r)) + (r % 1 ? "½" : "") : "");
+/** Preload the covers either side of the current one, so prev/next feel instant. */
+function usePreloadNeighbours(urls: (string | null | undefined)[], index: number) {
+  useEffect(() => {
+    for (const d of [1, -1]) {
+      const url = urls[(index + d + urls.length) % urls.length];
+      if (url) new Image().src = url;
+    }
+  }, [urls, index]);
+}
+
+/**
+ * Artwork that holds its space with a recessive shimmer and fades in once
+ * loaded. Render it with `key={src}` so each new cover starts from the skeleton.
+ */
+function Artwork({ src, alt, className }: { src: string | null | undefined; alt: string; className: string }) {
+  const ref = useRef<HTMLImageElement>(null);
+  const [loaded, setLoaded] = useState(false);
+  // An image already in cache can finish before hydration attaches onLoad.
+  useEffect(() => {
+    if (ref.current?.complete) setLoaded(true);
+  }, []);
+  return (
+    <div className={clsx("overflow-hidden bg-white/[0.06]", !loaded && "skeleton-shimmer", className)}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        ref={ref}
+        src={src ?? ""}
+        alt={alt}
+        onLoad={() => setLoaded(true)}
+        onError={() => setLoaded(true)}
+        className={clsx("h-full w-full object-cover transition-opacity duration-200 ease-out", loaded ? "opacity-100" : "opacity-0")}
+      />
+    </div>
+  );
+}
+
 /** Star glyphs for the eye, words for screen readers. */
 function Stars({ r }: { r: number | null }) {
   if (!r) return null;
@@ -87,11 +123,14 @@ function Bars() {
   return (
     <span aria-hidden className="flex h-3 items-end gap-[2px]">
       {[0, 0.2, 0.4].map((d) => (
-        <span key={d} className="w-[3px] animate-[eq_0.9s_ease-in-out_infinite] rounded-full bg-livery-gold" style={{ animationDelay: `${d}s` }} />
+        <span key={d} className="h-full w-[3px] origin-bottom animate-[eq_0.9s_ease-in-out_infinite] rounded-full bg-livery-gold" style={{ animationDelay: `${d}s` }} />
       ))}
     </span>
   );
 }
+
+const COVERS = music.songs.map((s) => s.cover);
+const POSTERS = films.films.map((f) => f.poster);
 
 const LIST = "mt-2 max-h-[22rem] space-y-0.5 overflow-y-auto pr-1 [scrollbar-color:rgba(255,255,255,0.2)_transparent] [scrollbar-width:thin] sm:max-h-[26rem]";
 const ROW = "flex w-full items-center gap-3 rounded-lg px-2 py-1.5 text-left transition-colors";
@@ -99,15 +138,15 @@ const LABEL = "font-mono text-[10px] uppercase tracking-[0.16em] text-white/60";
 
 function FilmsChannel({ index, onPick }: { index: number; onPick: (i: number) => void }) {
   const film: Film = films.films[index];
+  usePreloadNeighbours(POSTERS, index);
   return (
     <>
       <div className="flex min-w-0 flex-col">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <Artwork
           key={film.poster}
-          src={film.poster ?? ""}
+          src={film.poster}
           alt={`Poster of ${film.title}`}
-          className="mx-auto aspect-[2/3] w-full max-w-[10rem] animate-[fadein_0.5s_ease-out] rounded-lg object-cover shadow-[0_18px_40px_-18px_rgba(0,0,0,0.9)] sm:max-w-[12rem]"
+          className="mx-auto aspect-[2/3] w-full max-w-[10rem] rounded-lg shadow-[0_18px_40px_-18px_rgba(0,0,0,0.9)] sm:max-w-[12rem]"
         />
         <p className={clsx(LABEL, "mt-4")}>{film.watched ? `Watched ${watchedOn(film.watched)}` : "Watched"}</p>
         <p className="mt-1 font-serif text-[1.35rem] leading-tight">
@@ -169,9 +208,13 @@ export default function InflightEntertainment() {
   const [elapsed, setElapsed] = useState(0);
   // Set when a preview refuses to play (expired URL, network), cleared per song.
   const [failed, setFailed] = useState(false);
+  // Between pressing play and the first sound (the preview streams on demand).
+  const [buffering, setBuffering] = useState(false);
   const song = songs[index];
+  usePreloadNeighbours(COVERS, index);
   const fail = () => {
     setPlaying(false);
+    setBuffering(false);
     setFailed(true);
   };
 
@@ -182,7 +225,10 @@ export default function InflightEntertainment() {
     el.src = song.preview;
     setElapsed(0);
     setFailed(false);
-    if (playing) el.play().catch(fail);
+    if (playing) {
+      setBuffering(true);
+      el.play().catch(fail);
+    }
     // `playing` is read, not watched: toggling play must not reload the song.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index]);
@@ -192,10 +238,12 @@ export default function InflightEntertainment() {
   const toggle = () => {
     const el = audio.current;
     if (!el || !song.preview) return;
-    if (playing) {
+    if (playing || buffering) {
       el.pause();
       setPlaying(false);
+      setBuffering(false);
     } else {
+      setBuffering(true);
       el.play()
         .then(() => {
           setPlaying(true);
@@ -265,9 +313,20 @@ export default function InflightEntertainment() {
       <div className="rounded-[34px] bg-[linear-gradient(160deg,#f4f2ed,#dcd8d0)] p-3 shadow-[0_30px_60px_-35px_rgba(21,21,21,0.6),inset_0_1px_0_rgba(255,255,255,0.8)] sm:p-4 lg:order-1">
         <div className="rounded-[24px] bg-[#0c0d10] p-2 shadow-[inset_0_2px_6px_rgba(0,0,0,0.8)] sm:p-2.5">
           <div
-            className="relative overflow-hidden rounded-[18px] text-paper-light transition-[background] duration-700"
-            style={{ background: `radial-gradient(120% 90% at 0% 0%, ${tint}cc, transparent 60%), #10141f` }}
+            className="relative overflow-hidden rounded-[18px] bg-[#10141f] text-paper-light"
           >
+            {/* Channel/song tint: CSS can't transition gradients, so the new one dissolves in over the old. */}
+            <AnimatePresence initial={false}>
+              <motion.span
+                key={tint}
+                aria-hidden
+                className="pointer-events-none absolute inset-0"
+                style={{ background: `radial-gradient(120% 90% at 0% 0%, ${tint}cc, transparent 60%)` }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1, transition: { duration: 0.4, ease: "easeInOut" } }}
+                exit={{ opacity: 0, transition: { duration: 0, delay: 0.4 } }}
+              />
+            </AnimatePresence>
             {/* screen glare */}
             <span aria-hidden className="pointer-events-none absolute inset-0 bg-[linear-gradient(115deg,rgba(255,255,255,0.08),transparent_35%)]" />
 
@@ -305,20 +364,21 @@ export default function InflightEntertainment() {
                 <>
                   {/* now playing */}
                   <div className="flex min-w-0 flex-col">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
+                    <Artwork
                       key={song.cover}
-                      src={song.cover ?? ""}
+                      src={song.cover}
                       alt={`Cover of ${song.album ?? song.title}`}
-                      className="mx-auto aspect-square w-full max-w-[15rem] animate-[fadein_0.5s_ease-out] rounded-xl object-cover shadow-[0_18px_40px_-18px_rgba(0,0,0,0.9)] sm:max-w-none"
+                      className="mx-auto aspect-square w-full max-w-[15rem] rounded-xl shadow-[0_18px_40px_-18px_rgba(0,0,0,0.9)] sm:max-w-none"
                     />
                     <p role="status" className={clsx(LABEL, "mt-4 flex items-center gap-2", failed ? "text-[#ff8a65]" : "text-white/60")}>
-                      {playing ? <Bars /> : null}
+                      {playing && !buffering ? <Bars /> : null}
                       {failed
                         ? "Preview unavailable, try the next song"
                         : !song.preview
                           ? "No preview for this song"
-                          : playing
+                          : buffering
+                            ? "Tuning in…"
+                            : playing
                             ? "Now playing"
                             : elapsed > 0
                               ? "Paused"
@@ -336,7 +396,8 @@ export default function InflightEntertainment() {
                     {/* progress of the 30-second preview */}
                     <div className="mt-4">
                       <div className="h-1 overflow-hidden rounded-full bg-white/15">
-                        <div className="h-full rounded-full bg-livery-gold transition-[width] duration-200 ease-linear" style={{ width: `${(elapsed / length) * 100}%` }} />
+                        {/* Linear on purpose: the bar maps elapsed time, it is not a UI gesture. */}
+                        <div className="h-full origin-left rounded-full bg-livery-gold transition-transform duration-200 ease-linear" style={{ transform: `scaleX(${elapsed / length})` }} />
                       </div>
                       <div className="mt-1.5 flex justify-between font-mono text-[10px] text-white/60">
                         <span>{mmss(elapsed)}</span>
@@ -350,12 +411,19 @@ export default function InflightEntertainment() {
                       </button>
                       <button
                         type="button"
-                        aria-label={playing ? "Pause preview" : "Play 30-second preview"}
+                        aria-label={buffering ? "Loading preview, press to cancel" : playing ? "Pause preview" : "Play 30-second preview"}
+                        aria-busy={buffering}
                         onClick={toggle}
                         disabled={!song.preview}
                         className="grid h-12 w-12 place-items-center rounded-full bg-paper-light text-livery transition-[background-color,box-shadow] duration-150 ease-out hover:bg-white active:shadow-[inset_0_2px_5px_rgba(21,21,21,0.3)] disabled:opacity-40"
                       >
-                        <PlayIcon playing={playing} />
+                        {buffering ? (
+                          <svg viewBox="0 0 24 24" className="h-5 w-5 animate-[spin_0.8s_cubic-bezier(0.4,0,0.2,1)_infinite]" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden>
+                            <path d="M12 3a9 9 0 1 1-9 9" />
+                          </svg>
+                        ) : (
+                          <PlayIcon playing={playing} />
+                        )}
                       </button>
                       <button type="button" aria-label="Next song" onClick={() => go(index + 1)} className="grid h-11 w-11 place-items-center text-white/70 transition-colors hover:text-white">
                         <SkipIcon />
@@ -403,6 +471,8 @@ export default function InflightEntertainment() {
         ref={audio}
         preload="none"
         onTimeUpdate={(e) => setElapsed(e.currentTarget.currentTime)}
+        onWaiting={() => setBuffering(true)}
+        onPlaying={() => setBuffering(false)}
         onEnded={() => go(index + 1, true)}
       />
     </section>

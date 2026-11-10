@@ -25,8 +25,8 @@ function MadridClock() {
 
 export default function Hero() {
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
-  const heroSrc = `${basePath}/images/jaime-hero.png`;
-  const frameSrc = `${basePath}/images/polaroid-frame.png`;
+  const heroSrc = `${basePath}/images/jaime-hero.webp`;
+  const frameSrc = `${basePath}/images/polaroid-frame.webp`;
   const cvSrc = `${basePath}/cv/Jaime-Rabazo-CV.pdf`;
 
   // Photo composition: keep --inside-* and --outside-* identical and tweak
@@ -45,7 +45,7 @@ export default function Hero() {
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.5 }}
           className="flex flex-wrap gap-x-5 gap-y-1 font-mono text-[11px] uppercase tracking-[0.18em] text-ink-500"
         >
           <span>
@@ -61,7 +61,7 @@ export default function Hero() {
             <motion.h1
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.9, ease }}
+              transition={{ duration: 0.6, ease }}
               className="board inline-block p-3 md:p-4"
             >
               <span className="block font-mono font-bold leading-none text-[clamp(2.6rem,8.5vw,6.25rem)]">
@@ -81,7 +81,7 @@ export default function Hero() {
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.9, delay: 0.15, ease }}
+              transition={{ duration: 0.6, delay: 0.15, ease }}
             >
               <p className="mt-10 max-w-xl font-serif text-[1.75rem] md:text-[2.15rem] leading-[1.15] text-ink-900">
                 I studied computer science and business at the same time.{" "}
@@ -147,10 +147,10 @@ export default function Hero() {
           <motion.figure
             initial={{ opacity: 0, rotate: 2, y: 20 }}
             animate={{ opacity: 1, rotate: 0, y: 0 }}
-            transition={{ duration: 1.1, delay: 0.2, ease }}
+            transition={{ duration: 0.6, delay: 0.25, ease }}
             className="relative mx-auto w-full max-w-[340px] md:max-w-[440px]"
           >
-            <div className="relative aspect-square w-full -rotate-[3deg] transition-transform duration-700 hover:rotate-0">
+            <div className="relative aspect-square w-full -rotate-[3deg] transition-transform duration-[400ms] ease-out hover:rotate-0">
               <div className="absolute inset-0" style={photoVars}>
                 <div className="absolute inset-0 overflow-hidden">
                   {/* eslint-disable-next-line @next/next/no-img-element */}

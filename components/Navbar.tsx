@@ -89,8 +89,8 @@ export default function Navbar() {
       <motion.header
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-        className={`fixed inset-x-0 top-0 z-50 border-b transition-[background-color,border-color,backdrop-filter] duration-500 ${
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        className={`fixed inset-x-0 top-0 z-50 border-b transition-[background-color,border-color,backdrop-filter] duration-300 ${
           scrolled ? "backdrop-blur-md bg-paper/80 border-ink-900/10" : "bg-transparent border-transparent"
         }`}
       >
@@ -164,8 +164,8 @@ export default function Navbar() {
             id="mobile-menu"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
+            exit={{ opacity: 0, transition: { duration: 0.18, ease: "easeIn" } }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
             className="fixed inset-0 z-40 bg-paper/98 backdrop-blur-md lg:hidden"
           >
             <ul className="flex h-full flex-col items-center justify-center gap-7">
@@ -174,7 +174,7 @@ export default function Navbar() {
                   key={l.href}
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 + i * 0.05, duration: 0.6 }}
+                  transition={{ delay: 0.08 + i * 0.05, duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
                 >
                   <Go
                     href={l.href}
