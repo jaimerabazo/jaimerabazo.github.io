@@ -88,7 +88,7 @@ export default function Departures() {
                 <div
                   key={r.to}
                   role="row"
-                  className={`${rowClass} relative bg-white/[0.04] hover:bg-white/[0.08] transition-colors has-[a:focus-visible]:outline has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-offset-2 has-[a:focus-visible]:outline-flap`}
+                  className={`${rowClass} relative bg-white/[0.04] hover:bg-white/[0.08] active:bg-white/[0.12] transition-colors has-[a:focus-visible]:outline has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-offset-2 has-[a:focus-visible]:outline-flap`}
                 >
                   {cells}
                 </div>

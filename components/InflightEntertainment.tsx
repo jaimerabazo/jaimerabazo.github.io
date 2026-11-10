@@ -178,7 +178,7 @@ function FilmsChannel({ index, onPick }: { index: number; onPick: (i: number) =>
                 type="button"
                 onClick={() => onPick(i)}
                 aria-current={i === index}
-                className={clsx(ROW, i === index ? "bg-white/[0.12]" : "hover:bg-white/[0.06]")}
+                className={clsx(ROW, i === index ? "bg-white/[0.12]" : "hover:bg-white/[0.06] active:bg-white/[0.1]")}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={f.poster ?? ""} alt="" loading="lazy" className="h-[54px] w-9 shrink-0 rounded object-cover" />
@@ -347,7 +347,7 @@ export default function InflightEntertainment() {
                     onKeyDown={onTabKey}
                     className={clsx(
                       "min-h-6 rounded-full px-3 py-1.5 uppercase tracking-[0.14em] transition-colors",
-                      tab === t.id ? "bg-paper-light text-livery" : "text-white/55 hover:bg-white/10 hover:text-white"
+                      tab === t.id ? "bg-paper-light text-livery" : "text-white/60 hover:bg-white/10 hover:text-white active:bg-white/15"
                     )}
                   >
                     {t.label}
@@ -406,7 +406,7 @@ export default function InflightEntertainment() {
                     </div>
 
                     <div className="mt-3 flex items-center justify-center gap-3">
-                      <button type="button" aria-label="Previous song" onClick={() => go(index - 1)} className="grid h-11 w-11 place-items-center text-white/70 transition-colors hover:text-white">
+                      <button type="button" aria-label="Previous song" onClick={() => go(index - 1)} className="grid h-11 w-11 place-items-center rounded-full text-white/70 transition-colors duration-150 hover:bg-white/10 hover:text-white active:bg-white/15">
                         <SkipIcon back />
                       </button>
                       <button
@@ -415,7 +415,7 @@ export default function InflightEntertainment() {
                         aria-busy={buffering}
                         onClick={toggle}
                         disabled={!song.preview}
-                        className="grid h-12 w-12 place-items-center rounded-full bg-paper-light text-livery transition-[background-color,box-shadow] duration-150 ease-out hover:bg-white active:shadow-pressed disabled:opacity-40"
+                        className="grid h-12 w-12 place-items-center rounded-full bg-paper-light text-livery transition-[background-color,box-shadow] duration-150 ease-out hover:bg-white active:shadow-pressed disabled:cursor-not-allowed disabled:opacity-40"
                       >
                         {buffering ? (
                           <svg viewBox="0 0 24 24" className="h-5 w-5 animate-[spin_0.8s_cubic-bezier(0.4,0,0.2,1)_infinite]" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden>
@@ -425,7 +425,7 @@ export default function InflightEntertainment() {
                           <PlayIcon playing={playing} />
                         )}
                       </button>
-                      <button type="button" aria-label="Next song" onClick={() => go(index + 1)} className="grid h-11 w-11 place-items-center text-white/70 transition-colors hover:text-white">
+                      <button type="button" aria-label="Next song" onClick={() => go(index + 1)} className="grid h-11 w-11 place-items-center rounded-full text-white/70 transition-colors duration-150 hover:bg-white/10 hover:text-white active:bg-white/15">
                         <SkipIcon />
                       </button>
                     </div>
@@ -441,7 +441,7 @@ export default function InflightEntertainment() {
                             type="button"
                             onClick={() => go(i, true)}
                             aria-current={i === index}
-                            className={clsx(ROW, i === index ? "bg-white/[0.12]" : "hover:bg-white/[0.06]")}
+                            className={clsx(ROW, i === index ? "bg-white/[0.12]" : "hover:bg-white/[0.06] active:bg-white/[0.1]")}
                           >
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img src={s.cover ?? ""} alt="" loading="lazy" className="h-9 w-9 shrink-0 rounded-md object-cover" />

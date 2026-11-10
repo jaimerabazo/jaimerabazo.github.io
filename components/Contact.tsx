@@ -258,7 +258,7 @@ export default function Contact() {
                             <span className="block text-[12px] font-bold">{f.box}</span>
                             <span
                               className={`relative mt-0.5 grid h-10 w-14 place-items-center border-[1.5px] border-ink-900 transition-colors ${
-                                active ? "" : "group-hover:bg-ink-900/5"
+                                active ? "" : "group-hover:bg-ink-900/5 group-active:bg-ink-900/10"
                               }`}
                             >
                               {active && seen && (
@@ -342,7 +342,7 @@ export default function Contact() {
                   href={bookHref}
                   target="_blank"
                   rel="noreferrer"
-                  className="mt-5 flex items-center justify-between bg-livery px-4 py-3 text-[13px] font-bold tracking-[0.1em] text-paper-light transition-colors hover:bg-pen max-md:mt-5"
+                  className="btn-primary mt-5 flex items-center justify-between px-4 py-3 text-[13px] font-bold tracking-[0.1em] text-paper-light [--btn-fill:theme(colors.livery.DEFAULT)]"
                 >
                   Book a {fare.label} call
                   <span aria-hidden className="text-livery-gold">↗</span>
@@ -375,13 +375,13 @@ export default function Contact() {
             <a
               ref={emailRef}
               href={`mailto:${EMAIL}`}
-              className="inline-flex items-center gap-2 rounded-full border border-ink-900/20 px-5 py-3 text-sm font-medium text-ink-900 hover:border-ink-900/40 transition-colors"
+              className="btn-secondary inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-medium text-ink-900"
             >
               {EMAIL}
             </a>
             <button
               onClick={copyEmail}
-              className="inline-grid rounded-full border border-ink-900/20 px-5 py-3 text-sm font-medium text-ink-900 hover:border-ink-900/40 transition-colors"
+              className="btn-secondary inline-grid rounded-full px-5 py-3 text-sm font-medium text-ink-900"
             >
               {/* Both labels share one grid cell, so the button keeps the wider one's width. */}
               <span className={`col-start-1 row-start-1 transition-opacity duration-200 ${copy === "copied" ? "opacity-0" : ""}`}>Copy email</span>

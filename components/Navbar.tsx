@@ -128,13 +128,13 @@ export default function Navbar() {
             <a
               href={CV_SRC}
               download
-              className="inline-flex items-center rounded-full border border-ink-900/20 text-ink-900 text-[13px] font-medium px-4 py-2 hover:border-ink-900/40 transition-colors"
+              className="btn-secondary inline-flex items-center rounded-full text-ink-900 text-[13px] font-medium px-4 py-2"
             >
               Download CV
             </a>
             <a
               href="mailto:jaime.rabazofernandez@gmail.com"
-              className="inline-flex items-center rounded-full bg-ink-900 text-paper text-[13px] font-medium px-4 py-2 hover:bg-pen transition-colors"
+              className="btn-primary inline-flex items-center rounded-full text-paper text-[13px] font-medium px-4 py-2"
             >
               Email me
             </a>
@@ -192,10 +192,10 @@ export default function Navbar() {
                 </motion.li>
               ))}
               <li className="mt-6 flex gap-3">
-                <a href="mailto:jaime.rabazofernandez@gmail.com" onClick={() => setOpen(false)} className="rounded-full bg-ink-900 text-paper px-6 py-3 text-sm font-medium">
+                <a href="mailto:jaime.rabazofernandez@gmail.com" onClick={() => setOpen(false)} className="btn-primary rounded-full text-paper px-6 py-3 text-sm font-medium">
                   Email me
                 </a>
-                <a href={CV_SRC} download onClick={() => setOpen(false)} className="rounded-full border border-ink-900/20 text-ink-900 px-6 py-3 text-sm font-medium">
+                <a href={CV_SRC} download onClick={() => setOpen(false)} className="btn-secondary rounded-full text-ink-900 px-6 py-3 text-sm font-medium">
                   Download CV
                 </a>
               </li>

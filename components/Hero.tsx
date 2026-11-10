@@ -113,20 +113,20 @@ export default function Hero() {
               <div className="mt-9 flex flex-wrap items-center gap-3">
                 <a
                   href="mailto:jaime.rabazofernandez@gmail.com"
-                  className="inline-flex items-center gap-2 rounded-full bg-ink-900 px-6 py-3.5 text-sm font-medium text-paper hover:bg-pen transition-colors"
+                  className="inline-flex items-center gap-2 btn-primary rounded-full px-6 py-3.5 text-sm font-medium text-paper"
                 >
                   Email me <span aria-hidden>→</span>
                 </a>
                 <a
                   href="#contact"
-                  className="inline-flex items-center gap-2 rounded-full border border-ink-900/20 bg-paper-light px-6 py-3.5 text-sm font-medium text-ink-900 hover:border-ink-900/40 transition-colors"
+                  className="inline-flex items-center gap-2 btn-secondary rounded-full bg-paper-light px-6 py-3.5 text-sm font-medium text-ink-900"
                 >
                   Book a call <span aria-hidden className="text-pen">✈</span>
                 </a>
                 <a
                   href={cvSrc}
                   download
-                  className="inline-flex items-center gap-2 rounded-full border border-ink-900/20 bg-paper-light px-6 py-3.5 text-sm font-medium text-ink-900 hover:border-ink-900/40 transition-colors"
+                  className="inline-flex items-center gap-2 btn-secondary rounded-full bg-paper-light px-6 py-3.5 text-sm font-medium text-ink-900"
                 >
                   Download CV <span aria-hidden className="text-ink-400">↓</span>
                 </a>

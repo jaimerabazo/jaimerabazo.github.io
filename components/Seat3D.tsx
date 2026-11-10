@@ -325,7 +325,7 @@ export default function Seat3D({ cover, title, progress }: Props) {
   };
 
   const btn =
-    "flex h-11 w-11 items-center justify-center rounded-full border border-ink-900/15 bg-paper-light text-ink-700 transition-colors hover:border-ink-900/35 hover:text-ink-900";
+    "btn-secondary flex h-11 w-11 items-center justify-center rounded-full bg-paper-light text-ink-700 hover:text-ink-900";
 
   return (
     <div className="relative h-full w-full">
