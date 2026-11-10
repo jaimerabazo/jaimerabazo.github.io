@@ -67,9 +67,15 @@ export default function RootLayout({
     >
       <body className="text-ink-900 font-sans antialiased">
         <MotionProvider>
+          <a
+            href="#main"
+            className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-full focus:bg-ink-900 focus:px-5 focus:py-3 focus:text-sm focus:font-medium focus:text-paper"
+          >
+            Skip to main content
+          </a>
           <SmoothScroll />
           <Navbar />
-          <main className="relative">{children}</main>
+          <main id="main" tabIndex={-1} className="relative">{children}</main>
           <Footer />
         </MotionProvider>
       </body>

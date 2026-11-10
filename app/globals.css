@@ -51,6 +51,11 @@ html.lenis body {
   color: var(--ink);
 }
 
+/* Skip-link and in-page anchor targets: focus moves there, no ring needed */
+[tabindex="-1"]:focus {
+  outline: none;
+}
+
 :focus-visible {
   outline: 2px solid var(--pen);
   outline-offset: 3px;

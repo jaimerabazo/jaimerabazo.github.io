@@ -136,7 +136,8 @@ export default function Hero() {
                   rel="noreferrer"
                   className="px-3 py-3.5 text-sm font-medium text-ink-600 hover:text-ink-900 transition-colors link-reveal"
                 >
-                  LinkedIn ↗
+                  LinkedIn <span aria-hidden>↗</span>
+                  <span className="sr-only"> (opens in a new tab)</span>
                 </a>
               </div>
             </motion.div>

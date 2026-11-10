@@ -160,7 +160,12 @@ export default function Logbook() {
                 </p>
                 <h4 className="mt-3 font-serif text-[1.65rem] leading-tight text-ink-900">
                   {q.title}
-                  {q.href && <span className="ml-2 text-base text-ink-400 group-hover:text-pen">↗</span>}
+                  {q.href && (
+                    <>
+                      <span aria-hidden className="ml-2 text-base text-ink-400 group-hover:text-pen">↗</span>
+                      <span className="sr-only"> (opens in a new tab)</span>
+                    </>
+                  )}
                 </h4>
                 <p className="mt-2 text-[15px] leading-relaxed text-ink-600">{q.text}</p>
               </>

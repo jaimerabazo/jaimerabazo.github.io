@@ -357,12 +357,12 @@ export default function Contact() {
                 <span>
                   <span className="text-livery-gold">Remarks</span> · Open to relocation · Google Meet
                 </span>
-                <span className="tabular text-paper-light/40">
+                <span className="tabular text-paper-light/60">
                   JR010524 {date} MAD MADRID
                 </span>
-                <span className="text-paper-light/40 md:hidden">ETKT 160 0052 0013</span>
+                <span className="text-paper-light/60 md:hidden">ETKT 160 0052 0013</span>
               </div>
-              <div className={`${STUB_EDGE} hidden items-center px-6 text-[10px] tracking-[0.12em] text-paper-light/40 md:flex md:text-[11px]`}>
+              <div className={`${STUB_EDGE} hidden items-center px-6 text-[10px] tracking-[0.12em] text-paper-light/60 md:flex md:text-[11px]`}>
                 ETKT 160 0052 0013
               </div>
             </div>
@@ -390,7 +390,7 @@ export default function Contact() {
               {copy === "failed" && "Couldn't copy: address selected, press ⌘/Ctrl+C"}
             </span>
             <a href={CV_SRC} download className="px-3 py-3 text-sm font-medium text-ink-600 hover:text-ink-900 link-reveal">
-              Download CV ↓
+              Download CV <span aria-hidden>↓</span>
             </a>
             <a
               href="https://www.linkedin.com/in/jaimerabazo"
@@ -398,7 +398,8 @@ export default function Contact() {
               rel="noreferrer"
               className="px-3 py-3 text-sm font-medium text-ink-600 hover:text-ink-900 link-reveal"
             >
-              LinkedIn ↗
+              LinkedIn <span aria-hidden>↗</span>
+              <span className="sr-only"> (opens in a new tab)</span>
             </a>
             <a
               href="https://github.com/jaimerabazo"
@@ -406,7 +407,8 @@ export default function Contact() {
               rel="noreferrer"
               className="px-3 py-3 text-sm font-medium text-ink-600 hover:text-ink-900 link-reveal"
             >
-              GitHub ↗
+              GitHub <span aria-hidden>↗</span>
+              <span className="sr-only"> (opens in a new tab)</span>
             </a>
           </div>
         </Reveal>

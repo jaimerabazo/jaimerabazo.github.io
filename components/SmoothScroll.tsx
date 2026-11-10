@@ -43,6 +43,11 @@ export default function SmoothScroll() {
       if (!el) return;
       e.preventDefault();
       lenis.scrollTo(el as HTMLElement, { offset: -40, duration: 1.4 });
+      // preventDefault skips the native focus move: do it by hand so keyboard
+      // and screen-reader users land where the page scrolled to.
+      const dest = el as HTMLElement;
+      if (!dest.matches("a[href], button, input, select, textarea, [tabindex]")) dest.setAttribute("tabindex", "-1");
+      dest.focus({ preventScroll: true });
     };
     document.addEventListener("click", handler);
 

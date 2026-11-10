@@ -25,6 +25,16 @@ const TABS: { id: Tab; label: string }[] = [
 const mmss = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 // "★★★★½" from a 0.5–5 rating.
 const stars = (r: number | null) => (r ? "★".repeat(Math.floor(r)) + (r % 1 ? "½" : "") : "");
+/** Star glyphs for the eye, words for screen readers. */
+function Stars({ r }: { r: number | null }) {
+  if (!r) return null;
+  return (
+    <>
+      <span aria-hidden>{stars(r)}</span>
+      <span className="sr-only">{r} out of 5 stars</span>
+    </>
+  );
+}
 const fmtDay = new Intl.DateTimeFormat("en-GB", { day: "2-digit", timeZone: "UTC" });
 const fmtMonth = new Intl.DateTimeFormat("en-GB", { month: "short", timeZone: "UTC" });
 // "03 JUL 2025", like the boarding pass dates.
@@ -85,7 +95,7 @@ function Bars() {
 
 const LIST = "mt-2 max-h-[22rem] space-y-0.5 overflow-y-auto pr-1 [scrollbar-color:rgba(255,255,255,0.2)_transparent] [scrollbar-width:thin] sm:max-h-[26rem]";
 const ROW = "flex w-full items-center gap-3 rounded-lg px-2 py-1.5 text-left transition-colors";
-const LABEL = "font-mono text-[10px] uppercase tracking-[0.16em] text-white/45";
+const LABEL = "font-mono text-[10px] uppercase tracking-[0.16em] text-white/60";
 
 function FilmsChannel({ index, onPick }: { index: number; onPick: (i: number) => void }) {
   const film: Film = films.films[index];
@@ -101,12 +111,17 @@ function FilmsChannel({ index, onPick }: { index: number; onPick: (i: number) =>
         />
         <p className={clsx(LABEL, "mt-4")}>{film.watched ? `Watched ${watchedOn(film.watched)}` : "Watched"}</p>
         <p className="mt-1 font-serif text-[1.35rem] leading-tight">
-          {film.title} <span className="text-white/45">{film.year}</span>
+          {film.title} <span className="text-white/60">{film.year}</span>
         </p>
-        <p className="mt-1 flex items-center gap-2 text-[15px] text-livery-gold" aria-label={film.rating ? `${film.rating} out of 5 stars` : undefined}>
-          {stars(film.rating)}
-          {film.liked && <span className="text-[13px] text-[#ff8a65]" aria-label="liked">♥</span>}
-          {film.rewatch && <span className="font-mono text-[9px] uppercase tracking-[0.14em] text-white/45">rewatch</span>}
+        <p className="mt-1 flex items-center gap-2 text-[15px] text-livery-gold">
+          <Stars r={film.rating} />
+          {film.liked && (
+            <span className="text-[13px] text-[#ff8a65]">
+              <span aria-hidden>♥</span>
+              <span className="sr-only">, liked</span>
+            </span>
+          )}
+          {film.rewatch && <span className="font-mono text-[9px] uppercase tracking-[0.14em] text-white/60">rewatch</span>}
         </p>
         {film.review && (
           <p className="mt-3 line-clamp-4 border-l-2 border-livery-gold/60 pl-3 font-serif text-[14px] italic leading-snug text-white/75">
@@ -130,9 +145,11 @@ function FilmsChannel({ index, onPick }: { index: number; onPick: (i: number) =>
                 <img src={f.poster ?? ""} alt="" loading="lazy" className="h-[54px] w-9 shrink-0 rounded object-cover" />
                 <span className="min-w-0 flex-1">
                   <span className={clsx("block truncate text-[13px]", i === index ? "text-livery-gold" : "text-paper-light")}>{f.title}</span>
-                  <span className="block truncate text-[12px] text-white/50">{f.year}</span>
+                  <span className="block truncate text-[12px] text-white/60">{f.year}</span>
                 </span>
-                <span className="shrink-0 text-[11px] text-livery-gold/80">{stars(f.rating)}</span>
+                <span className="shrink-0 text-[11px] text-livery-gold/80">
+                  <Stars r={f.rating} />
+                </span>
               </button>
             </li>
           ))}
@@ -200,6 +217,16 @@ export default function InflightEntertainment() {
     if (t !== "music" && playing) toggle();
     setTab(t);
   };
+  // Tab pattern: arrows move between channels, focus follows the selection.
+  const onTabKey = (e: React.KeyboardEvent) => {
+    const step = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+    if (!step) return;
+    e.preventDefault();
+    const i = TABS.findIndex((t) => t.id === tab);
+    const next = TABS[(i + step + TABS.length) % TABS.length].id;
+    switchTo(next);
+    document.getElementById(`ife-tab-${next}`)?.focus();
+  };
   // Previews last ~30 s; fall back to that before metadata loads.
   const length = audio.current?.duration || 30;
   const copy = COPY[tab];
@@ -253,10 +280,14 @@ export default function InflightEntertainment() {
                     key={t.id}
                     type="button"
                     role="tab"
+                    id={`ife-tab-${t.id}`}
                     aria-selected={tab === t.id}
+                    aria-controls="ife-panel"
+                    tabIndex={tab === t.id ? 0 : -1}
                     onClick={() => switchTo(t.id)}
+                    onKeyDown={onTabKey}
                     className={clsx(
-                      "rounded-full px-3 py-1 uppercase tracking-[0.14em] transition-colors",
+                      "min-h-6 rounded-full px-3 py-1.5 uppercase tracking-[0.14em] transition-colors",
                       tab === t.id ? "bg-paper-light text-livery" : "text-white/55 hover:bg-white/10 hover:text-white"
                     )}
                   >
@@ -264,10 +295,10 @@ export default function InflightEntertainment() {
                   </button>
                 ))}
               </div>
-              <span className="hidden whitespace-nowrap text-white/45 sm:inline">MAD → YOU</span>
+              <span className="hidden whitespace-nowrap text-white/60 sm:inline">MAD → YOU</span>
             </div>
 
-            <div role="tabpanel" className="relative grid gap-5 p-4 sm:min-h-[30rem] sm:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] sm:p-5">
+            <div role="tabpanel" id="ife-panel" aria-labelledby={`ife-tab-${tab}`} className="relative grid gap-5 p-4 sm:min-h-[30rem] sm:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] sm:p-5">
               {tab === "films" ? (
                 <FilmsChannel index={filmIndex} onPick={setFilmIndex} />
               ) : (
@@ -281,7 +312,7 @@ export default function InflightEntertainment() {
                       alt={`Cover of ${song.album ?? song.title}`}
                       className="mx-auto aspect-square w-full max-w-[15rem] animate-[fadein_0.5s_ease-out] rounded-xl object-cover shadow-[0_18px_40px_-18px_rgba(0,0,0,0.9)] sm:max-w-none"
                     />
-                    <p role="status" className={clsx(LABEL, "mt-4 flex items-center gap-2", failed ? "text-[#ff8a65]" : "text-white/50")}>
+                    <p role="status" className={clsx(LABEL, "mt-4 flex items-center gap-2", failed ? "text-[#ff8a65]" : "text-white/60")}>
                       {playing ? <Bars /> : null}
                       {failed
                         ? "Preview unavailable, try the next song"
@@ -295,7 +326,10 @@ export default function InflightEntertainment() {
                     </p>
                     <p className="mt-1 truncate font-serif text-[1.35rem] leading-tight">
                       {song.title}
-                      {song.explicit && <span className="ml-2 rounded-[3px] bg-white/20 px-1 align-middle font-mono text-[9px] not-italic">E</span>}
+                      {song.explicit && <span className="ml-2 rounded-[3px] bg-white/20 px-1 align-middle font-mono text-[9px] not-italic">
+                          <span aria-hidden>E</span>
+                          <span className="sr-only">explicit</span>
+                        </span>}
                     </p>
                     <p className="truncate text-[14px] text-white/65">{song.artist}</p>
 
@@ -304,14 +338,14 @@ export default function InflightEntertainment() {
                       <div className="h-1 overflow-hidden rounded-full bg-white/15">
                         <div className="h-full rounded-full bg-livery-gold transition-[width] duration-200 ease-linear" style={{ width: `${(elapsed / length) * 100}%` }} />
                       </div>
-                      <div className="mt-1.5 flex justify-between font-mono text-[10px] text-white/45">
+                      <div className="mt-1.5 flex justify-between font-mono text-[10px] text-white/60">
                         <span>{mmss(elapsed)}</span>
                         <span>preview · {mmss(song.duration)}</span>
                       </div>
                     </div>
 
-                    <div className="mt-3 flex items-center justify-center gap-6">
-                      <button type="button" aria-label="Previous song" onClick={() => go(index - 1)} className="text-white/70 transition-colors hover:text-white">
+                    <div className="mt-3 flex items-center justify-center gap-3">
+                      <button type="button" aria-label="Previous song" onClick={() => go(index - 1)} className="grid h-11 w-11 place-items-center text-white/70 transition-colors hover:text-white">
                         <SkipIcon back />
                       </button>
                       <button
@@ -323,7 +357,7 @@ export default function InflightEntertainment() {
                       >
                         <PlayIcon playing={playing} />
                       </button>
-                      <button type="button" aria-label="Next song" onClick={() => go(index + 1)} className="text-white/70 transition-colors hover:text-white">
+                      <button type="button" aria-label="Next song" onClick={() => go(index + 1)} className="grid h-11 w-11 place-items-center text-white/70 transition-colors hover:text-white">
                         <SkipIcon />
                       </button>
                     </div>
@@ -345,9 +379,9 @@ export default function InflightEntertainment() {
                             <img src={s.cover ?? ""} alt="" loading="lazy" className="h-9 w-9 shrink-0 rounded-md object-cover" />
                             <span className="min-w-0 flex-1">
                               <span className={clsx("block truncate text-[13px]", i === index ? "text-livery-gold" : "text-paper-light")}>{s.title}</span>
-                              <span className="block truncate text-[12px] text-white/50">{s.artist}</span>
+                              <span className="block truncate text-[12px] text-white/60">{s.artist}</span>
                             </span>
-                            {i === index && playing ? <Bars /> : <span className="font-mono text-[10px] text-white/35">{mmss(s.duration)}</span>}
+                            {i === index && playing ? <Bars /> : <span className="font-mono text-[10px] text-white/60">{mmss(s.duration)}</span>}
                           </button>
                         </li>
                       ))}
