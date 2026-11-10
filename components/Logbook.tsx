@@ -99,7 +99,7 @@ export default function Logbook() {
         <div className="mt-12 space-y-6">
           {entries.map((e) => (
             <Reveal key={e.company} amount={0.1}>
-              <article className="relative grid gap-6 rounded-2xl border border-ink-900/10 bg-paper-light p-6 pl-8 md:grid-cols-[1fr_15rem] md:gap-10 md:p-10 md:pl-14 shadow-card">
+              <article className="relative grid gap-6 rounded-2xl border border-ink-900/10 bg-paper-light p-6 pl-8 md:grid-cols-[1fr_15rem] md:gap-10 md:p-10 md:pl-14">
                 {/* notebook margin rule */}
                 <span aria-hidden className="absolute inset-y-0 left-4 md:left-8 w-px bg-signal/40" />
                 <div>
@@ -175,7 +175,7 @@ export default function Logbook() {
             return (
               <Reveal key={q.title} delay={i * 0.06} className="h-full">
                 {q.href ? (
-                  <a href={q.href} target="_blank" rel="noreferrer" className={`${cls} hover:border-ink-900/25`}>
+                  <a href={q.href} target="_blank" rel="noreferrer" className={`${cls} shadow-card hover:border-ink-900/25`}>
                     {body}
                   </a>
                 ) : (

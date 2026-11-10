@@ -13,7 +13,8 @@
   --rule: rgba(21, 21, 21, 0.12);
 
   /* Elevation. One light source above the desk; shadows are ink-tinted, never black.
-     card:    notebook cards resting on the paper
+     card:    a card you can pick up, i.e. a clickable one. Read-only cards
+              (logbook entries, stamps, luggage tags) lie flat with a border.
      prop:    physical objects lifted off it (departure board, ticket, seat-back)
      art:     artwork on the dark in-flight screen (needs more weight on dark)
      pressed: a control pushed in */
