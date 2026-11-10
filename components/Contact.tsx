@@ -21,9 +21,9 @@ type Fare = {
 
 // Each fare is a Cal.com event type: cal.com/<username>/<slug>
 const fares: Fare[] = [
-  { code: "Q", minutes: 30, label: "30 min", box: "30MIN", slug: "30min" },
-  { code: "S", minutes: 60, label: "1 h", box: "1H", slug: "60min" },
-  { code: "L", minutes: 90, label: "1 h 30", box: "1H30", slug: "90min" },
+  { code: "Q", minutes: 30, label: "30-min", box: "30MIN", slug: "30min" },
+  { code: "S", minutes: 60, label: "1-hour", box: "1H", slug: "60min" },
+  { code: "L", minutes: 90, label: "90-min", box: "1H30", slug: "90min" },
 ];
 
 const BOOKING_REF = "JR2026A24";
@@ -50,9 +50,13 @@ const BAND =
   "grid bg-livery text-paper-light [text-shadow:none] md:grid-cols-[1fr_23rem]";
 const STUB_EDGE = "border-l-2 border-dashed border-paper-light/25";
 
-function Field({ label, value, small = false }: { label: string; value: ReactNode; small?: boolean }) {
+// `muted` fields are boarding-pass flavour, not information: kept, but quieter
+// than the call length and the Book button.
+const MUTED = "opacity-45";
+
+function Field({ label, value, small = false, muted = false }: { label: string; value: ReactNode; small?: boolean; muted?: boolean }) {
   return (
-    <div>
+    <div className={muted ? MUTED : undefined}>
       <span className={`block normal-case leading-tight tracking-[0.08em] text-ink-700 ${small ? "text-[8px]" : "text-[9px] md:text-[10px]"}`}>
         {label}
       </span>
@@ -101,7 +105,8 @@ function Brand({ small = false }: { small?: boolean }) {
 
 export default function Contact() {
   const [fare, setFare] = useState(fares[0]);
-  const [copied, setCopied] = useState(false);
+  const [copy, setCopy] = useState<"idle" | "copied" | "failed">("idle");
+  const emailRef = useRef<HTMLAnchorElement>(null);
   const now = useNow();
   // Pen marks mount (and draw) only once the pass has been seen, so the first
   // tick and circles are drawn in front of the reader rather than off-screen.
@@ -116,10 +121,21 @@ export default function Contact() {
   const copyEmail = async () => {
     try {
       await navigator.clipboard.writeText(EMAIL);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1800);
+      setCopy("copied");
+      setTimeout(() => setCopy("idle"), 1800);
     } catch {
-      // no-op
+      // Clipboard blocked (permissions, insecure context): select the address
+      // so a manual Cmd/Ctrl+C still works, and say so.
+      const el = emailRef.current;
+      const sel = window.getSelection();
+      if (el && sel) {
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
+      setCopy("failed");
+      setTimeout(() => setCopy("idle"), 4000);
     }
   };
 
@@ -129,7 +145,7 @@ export default function Contact() {
         <SectionTitle
           kicker="Final call"
           title="Got a seat on your team?"
-          note="tick a flight length, then board ✈"
+          note="pick a call length, then book ✈"
         />
 
         <Reveal className="mt-10">
@@ -148,7 +164,7 @@ export default function Contact() {
                     <span className="block whitespace-nowrap text-[10px] md:text-[11px] tracking-[0.2em] md:tracking-[0.3em] text-livery-gold">Boarding pass</span>
                   </span>
                 </span>
-                <span className="whitespace-nowrap rounded-full border border-livery-gold/70 px-3 py-1 text-[10px] md:text-[11px] font-bold tracking-[0.2em] text-livery-gold">
+                <span className="whitespace-nowrap rounded-full border border-livery-gold/70 opacity-60 px-3 py-1 text-[10px] md:text-[11px] font-bold tracking-[0.2em] text-livery-gold">
                   Fast track
                 </span>
               </div>
@@ -163,7 +179,7 @@ export default function Contact() {
                 {/* Who, booking and flight */}
                 <div className="grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-3">
                   <Field label="Passenger" value="Recruiter/You" />
-                  <Field label="Booking ref" value={BOOKING_REF} />
+                  <Field muted label="Booking ref" value={BOOKING_REF} />
                   <Field
                     label="Flight · Class · Date"
                     value={
@@ -198,7 +214,7 @@ export default function Contact() {
                     <p className="mt-1 text-[28px] md:text-[34px] font-bold leading-none">NOW</p>
                   </div>
                   <div>
-                    <Label text="Flight length" />
+                    <Label text="Call length" />
                     <p className="mt-1 text-[28px] md:text-[34px] font-bold leading-none">
                       <span className="relative inline-block">
                         {fare.minutes}
@@ -222,7 +238,7 @@ export default function Contact() {
                 {/* Selector + group */}
                 <div className="mt-6 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
                   <fieldset>
-                    <legend className="text-[12px] md:text-[13px] leading-snug">Please select flight length</legend>
+                    <legend className="text-[12px] md:text-[13px] leading-snug">Pick a call length</legend>
                     <div className="mt-2 flex gap-3">
                       {fares.map((f) => {
                         const active = f.slug === fare.slug;
@@ -242,7 +258,7 @@ export default function Contact() {
                             <span className="block text-[12px] font-bold">{f.box}</span>
                             <span
                               className={`relative mt-0.5 grid h-10 w-14 place-items-center border-[1.5px] border-ink-900 transition-colors ${
-                                active ? "" : "group-hover:bg-ink-900/5"
+                                active ? "" : "group-hover:bg-ink-900/5 group-active:bg-ink-900/10"
                               }`}
                             >
                               {active && seen && (
@@ -263,7 +279,7 @@ export default function Contact() {
                     </div>
                   </fieldset>
 
-                  <div className="flex items-end gap-5 sm:text-right">
+                  <div className={`flex items-end gap-5 sm:text-right ${MUTED}`}>
                     <div>
                       <Label text="Seq/Bn" />
                       <p className="text-[18px] leading-none">160</p>
@@ -279,7 +295,7 @@ export default function Contact() {
 
                 <div className="grid grid-cols-2 gap-x-4 gap-y-3 text-[14px] leading-snug max-md:mt-3">
                   <Field small label="Name" value="Recruiter/You" />
-                  <Field small label="Booking ref" value={BOOKING_REF} />
+                  <Field small muted label="Booking ref" value={BOOKING_REF} />
                   <Field small label="From" value="Madrid · MAD" />
                   <Field small label="To" value="Your team · YOU" />
                   <Field small label="Flight" value={`${FLIGHT} · ${fare.code}`} />
@@ -326,10 +342,11 @@ export default function Contact() {
                   href={bookHref}
                   target="_blank"
                   rel="noreferrer"
-                  className="mt-5 flex items-center justify-between bg-livery px-4 py-3 text-[13px] font-bold tracking-[0.1em] text-paper-light transition-colors hover:bg-pen max-md:mt-5"
+                  className="btn-primary mt-5 flex items-center justify-between px-4 py-3 text-[13px] font-bold tracking-[0.1em] text-paper-light [--btn-fill:theme(colors.livery.DEFAULT)]"
                 >
-                  Board · Book {fare.label}
-                  <span aria-hidden className="text-livery-gold">→</span>
+                  Book a {fare.label} call
+                  <span aria-hidden className="text-livery-gold">↗</span>
+                  <span className="sr-only">(opens Cal.com in a new tab)</span>
                 </a>
               </div>
             </div>
@@ -340,12 +357,12 @@ export default function Contact() {
                 <span>
                   <span className="text-livery-gold">Remarks</span> · Open to relocation · Google Meet
                 </span>
-                <span className="tabular text-paper-light/70">
+                <span className="tabular text-paper-light/60">
                   JR010524 {date} MAD MADRID
                 </span>
-                <span className="text-paper-light/70 md:hidden">ETKT 160 0052 0013</span>
+                <span className="text-paper-light/60 md:hidden">ETKT 160 0052 0013</span>
               </div>
-              <div className={`${STUB_EDGE} hidden items-center px-6 text-[10px] tracking-[0.12em] text-paper-light/70 md:flex md:text-[11px]`}>
+              <div className={`${STUB_EDGE} hidden items-center px-6 text-[10px] tracking-[0.12em] text-paper-light/60 md:flex md:text-[11px]`}>
                 ETKT 160 0052 0013
               </div>
             </div>
@@ -356,19 +373,33 @@ export default function Contact() {
           <div className="mt-10 flex flex-wrap items-center gap-3">
             <p className="mr-2 font-mono text-[11px] uppercase tracking-[0.14em] text-ink-500">Rather write?</p>
             <a
+              ref={emailRef}
               href={`mailto:${EMAIL}`}
-              className="inline-flex items-center gap-2 rounded-full border border-ink-900/20 px-5 py-3 text-sm font-medium text-ink-900 hover:border-ink-900/40 transition-colors"
+              className="btn-secondary inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-medium text-ink-900"
             >
               {EMAIL}
             </a>
             <button
               onClick={copyEmail}
-              className="inline-flex items-center rounded-full border border-ink-900/20 px-5 py-3 text-sm font-medium text-ink-900 hover:border-ink-900/40 transition-colors"
+              className="btn-secondary inline-grid rounded-full px-5 py-3 text-sm font-medium text-ink-900"
             >
-              {copied ? "Copied ✓" : "Copy email"}
+              {/* Both labels share one grid cell, so the button keeps the wider one's width. */}
+              <span className={`col-start-1 row-start-1 transition-opacity duration-200 ${copy === "copied" ? "opacity-0" : ""}`}>Copy email</span>
+              <span aria-hidden className={`col-start-1 row-start-1 inline-flex items-center justify-center gap-1.5 transition-opacity duration-200 ${copy === "copied" ? "" : "opacity-0"}`}>
+                Copied
+                {copy === "copied" && (
+                  <svg viewBox="0 0 16 16" className="h-3.5 w-3.5 text-pen" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3 8.5 6.5 12 13 4.5" className="check-draw" />
+                  </svg>
+                )}
+              </span>
             </button>
+            <span role="status" aria-live="polite" className={copy === "failed" ? "text-sm text-ink-600" : "sr-only"}>
+              {copy === "copied" && "Email copied to clipboard"}
+              {copy === "failed" && "Couldn't copy: address selected, press ⌘/Ctrl+C"}
+            </span>
             <a href={CV_SRC} download className="px-3 py-3 text-sm font-medium text-ink-600 hover:text-ink-900 link-reveal">
-              Download CV ↓
+              Download CV <span aria-hidden>↓</span>
             </a>
             <a
               href="https://www.linkedin.com/in/jaimerabazo"
@@ -376,7 +407,8 @@ export default function Contact() {
               rel="noreferrer"
               className="px-3 py-3 text-sm font-medium text-ink-600 hover:text-ink-900 link-reveal"
             >
-              LinkedIn ↗
+              LinkedIn <span aria-hidden>↗</span>
+              <span className="sr-only"> (opens in a new tab)</span>
             </a>
             <a
               href="https://github.com/jaimerabazo"
@@ -384,7 +416,8 @@ export default function Contact() {
               rel="noreferrer"
               className="px-3 py-3 text-sm font-medium text-ink-600 hover:text-ink-900 link-reveal"
             >
-              GitHub ↗
+              GitHub <span aria-hidden>↗</span>
+              <span className="sr-only"> (opens in a new tab)</span>
             </a>
           </div>
         </Reveal>

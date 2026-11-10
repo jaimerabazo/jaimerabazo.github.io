@@ -27,7 +27,7 @@ const rows: Row[] = [
 const statusColor: Record<Row["status"], string> = {
   BOARDING: "text-signal animate-blink",
   "ON BOARD": "text-flap",
-  ARRIVED: "text-paper/45",
+  ARRIVED: "text-paper/60",
 };
 
 export default function Departures() {
@@ -48,7 +48,7 @@ export default function Departures() {
           >
             <div
               role="row"
-              className="grid grid-cols-[4.5rem_1fr_auto] md:grid-cols-[6rem_1.3fr_1.2fr_7rem] gap-3 px-3 py-2 text-[10px] tracking-[0.2em] text-paper/40"
+              className="grid grid-cols-[4.5rem_1fr_auto] md:grid-cols-[6rem_1.3fr_1.2fr_7rem] gap-3 px-3 py-2 text-[10px] tracking-[0.2em] text-paper/60"
             >
               <span role="columnheader">Time</span>
               <span role="columnheader">Destination</span>
@@ -59,13 +59,22 @@ export default function Departures() {
               const cells = (
                 <>
                   <span role="cell" className="text-paper/70 tabular">{r.when}</span>
-                  <span role="cell" className="min-w-0">
-                    <SplitFlap text={r.to} delay={i * 0.08} className="block truncate text-flap" />
-                    <span className="mt-1 block truncate text-[11px] text-paper/50 md:hidden">
+                  {/* Wraps on phones instead of cutting text off; truncates (with a tooltip) on desktop. */}
+                  <span role="cell" className="min-w-0" title={r.to}>
+                    {r.href ? (
+                      // The link covers the whole row (::after) but keeps the table semantics intact.
+                      <a href={r.href} className="block focus-visible:outline-none after:absolute after:inset-0 after:rounded-md">
+                        <SplitFlap text={r.to} delay={i * 0.08} className="block text-flap max-md:whitespace-normal md:truncate" />
+                        <span className="sr-only"> — book a call</span>
+                      </a>
+                    ) : (
+                      <SplitFlap text={r.to} delay={i * 0.08} className="block text-flap max-md:whitespace-normal md:truncate" />
+                    )}
+                    <span className="mt-1 block text-[11px] text-paper/60 md:hidden">
                       {r.as}
                     </span>
                   </span>
-                  <span role="cell" className="hidden md:block truncate text-paper/70">
+                  <span role="cell" className="hidden md:block truncate text-paper/70" title={r.as}>
                     {r.as}
                   </span>
                   <span role="cell" className={`text-right ${statusColor[r.status]}`}>
@@ -76,14 +85,13 @@ export default function Departures() {
               const rowClass =
                 "grid grid-cols-[4.5rem_1fr_auto] md:grid-cols-[6rem_1.3fr_1.2fr_7rem] items-start md:items-center gap-3 rounded-md px-3 py-3 md:py-3.5 border-t border-white/[0.06]";
               return r.href ? (
-                <a
+                <div
                   key={r.to}
                   role="row"
-                  href={r.href}
-                  className={`${rowClass} bg-white/[0.04] hover:bg-white/[0.08] transition-colors`}
+                  className={`${rowClass} relative bg-white/[0.04] hover:bg-white/[0.08] active:bg-white/[0.12] transition-colors has-[a:focus-visible]:outline has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-offset-2 has-[a:focus-visible]:outline-flap`}
                 >
                   {cells}
-                </a>
+                </div>
               ) : (
                 <div key={r.to} role="row" className={rowClass}>
                   {cells}

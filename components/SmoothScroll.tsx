@@ -13,6 +13,9 @@ declare global {
 
 export default function SmoothScroll() {
   useEffect(() => {
+    // Reduced motion: keep native scrolling and instant anchor jumps.
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -39,7 +42,12 @@ export default function SmoothScroll() {
       const el = document.querySelector(id);
       if (!el) return;
       e.preventDefault();
-      lenis.scrollTo(el as HTMLElement, { offset: -40, duration: 1.4 });
+      lenis.scrollTo(el as HTMLElement, { offset: -40, duration: 1.1 });
+      // preventDefault skips the native focus move: do it by hand so keyboard
+      // and screen-reader users land where the page scrolled to.
+      const dest = el as HTMLElement;
+      if (!dest.matches("a[href], button, input, select, textarea, [tabindex]")) dest.setAttribute("tabindex", "-1");
+      dest.focus({ preventScroll: true });
     };
     document.addEventListener("click", handler);
 

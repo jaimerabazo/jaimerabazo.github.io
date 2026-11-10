@@ -1,39 +1,35 @@
-import type { Metadata } from "next";
-import localFont from "next/font/local";
+import type { Metadata, Viewport } from "next";
+import { Instrument_Sans, Instrument_Serif, JetBrains_Mono, Caveat } from "next/font/google";
 import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
+import MotionProvider from "@/components/MotionProvider";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
-// Self-hosted (not next/font/google): dev and CI shouldn't depend on reaching
-// Google Fonts over the network. Each file is the Latin-subset woff2 Google
-// itself serves for these families; variable ones cover their full weight range.
-const sans = localFont({
-  src: "../public/fonts/instrument-sans-variable.woff2",
-  weight: "400 700",
+const sans = Instrument_Sans({
+  subsets: ["latin"],
   variable: "--font-sans",
   display: "swap",
 });
 
-const serif = localFont({
-  src: [
-    { path: "../public/fonts/instrument-serif-regular.woff2", weight: "400", style: "normal" },
-    { path: "../public/fonts/instrument-serif-italic.woff2", weight: "400", style: "italic" },
-  ],
+const serif = Instrument_Serif({
+  subsets: ["latin"],
+  weight: "400",
+  style: ["normal", "italic"],
   variable: "--font-serif",
   display: "swap",
 });
 
-const mono = localFont({
-  src: "../public/fonts/jetbrains-mono-variable.woff2",
-  weight: "400 700",
+const mono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
   variable: "--font-mono",
   display: "swap",
 });
 
-const hand = localFont({
-  src: "../public/fonts/caveat-variable.woff2",
-  weight: "500 700",
+const hand = Caveat({
+  subsets: ["latin"],
+  weight: ["500", "700"],
   variable: "--font-hand",
   display: "swap",
 });
@@ -56,6 +52,11 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  themeColor: "#f3efe6",
+  colorScheme: "light",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
@@ -65,10 +66,18 @@ export default function RootLayout({
       className={`${sans.variable} ${serif.variable} ${mono.variable} ${hand.variable}`}
     >
       <body className="text-ink-900 font-sans antialiased">
-        <SmoothScroll />
-        <Navbar />
-        <main className="relative">{children}</main>
-        <Footer />
+        <MotionProvider>
+          <a
+            href="#main"
+            className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-full focus:bg-ink-900 focus:px-5 focus:py-3 focus:text-sm focus:font-medium focus:text-paper"
+          >
+            Skip to main content
+          </a>
+          <SmoothScroll />
+          <Navbar />
+          <main id="main" tabIndex={-1} className="relative">{children}</main>
+          <Footer />
+        </MotionProvider>
       </body>
     </html>
   );

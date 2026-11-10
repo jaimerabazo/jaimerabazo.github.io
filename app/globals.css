@@ -3,12 +3,25 @@
 @tailwind utilities;
 
 :root {
+  color-scheme: light;
   --paper: #f3efe6;
   --ink: #151515;
   --pen: #2c49b8;
+  --pen-press: #253c98; /* pen, HSL lightness -8% */
   --board: #18181b;
   --flap: #f4c84a;
   --rule: rgba(21, 21, 21, 0.12);
+
+  /* Elevation. One light source above the desk; shadows are ink-tinted, never black.
+     card:    a card you can pick up, i.e. a clickable one. Read-only cards
+              (logbook entries, stamps, luggage tags) lie flat with a border.
+     prop:    physical objects lifted off it (departure board, ticket, seat-back)
+     art:     artwork on the dark in-flight screen (needs more weight on dark)
+     pressed: a control pushed in */
+  --shadow-card: 0 20px 40px -34px rgba(21, 21, 21, 0.5);
+  --shadow-prop: 0 2px 4px rgba(21, 21, 21, 0.06), 0 28px 50px -30px rgba(21, 21, 21, 0.5);
+  --shadow-art: 0 18px 40px -18px rgba(0, 0, 0, 0.9);
+  --shadow-pressed: inset 0 2px 5px rgba(21, 21, 21, 0.3);
 }
 
 html,
@@ -50,6 +63,11 @@ html.lenis body {
   color: var(--ink);
 }
 
+/* Skip-link and in-page anchor targets: focus moves there, no ring needed */
+[tabindex="-1"]:focus {
+  outline: none;
+}
+
 :focus-visible {
   outline: 2px solid var(--pen);
   outline-offset: 3px;
@@ -60,6 +78,37 @@ html.lenis body {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* Buttons. States live here; size, type and layout stay at the call site.
+   Primary: the fill depends on the surface (ink on paper, livery on the ticket,
+   via --btn-fill); every primary turns to pen blue on hover and presses deeper.
+   Secondary: outlined; hover and press tint whatever fill it has with ink,
+   using an inset shadow so the tint can transition. */
+@layer components {
+  .btn-primary {
+    background-color: var(--btn-fill, var(--ink));
+    transition: background-color 120ms ease-out, box-shadow 120ms ease-out;
+  }
+  .btn-primary:hover {
+    background-color: var(--pen);
+  }
+  .btn-primary:active {
+    background-color: var(--pen-press);
+    box-shadow: var(--shadow-pressed);
+  }
+  .btn-secondary {
+    border: 1px solid rgba(21, 21, 21, 0.2);
+    transition: border-color 120ms ease-out, box-shadow 120ms ease-out, color 120ms ease-out;
+  }
+  .btn-secondary:hover {
+    border-color: rgba(21, 21, 21, 0.4);
+    box-shadow: inset 0 0 0 100vmax rgba(21, 21, 21, 0.04);
+  }
+  .btn-secondary:active {
+    border-color: rgba(21, 21, 21, 0.4);
+    box-shadow: inset 0 0 0 100vmax rgba(21, 21, 21, 0.08), var(--shadow-pressed);
   }
 }
 
@@ -78,7 +127,7 @@ html.lenis body {
   box-shadow:
     inset 0 0 0 1px rgba(255, 255, 255, 0.04),
     inset 0 2px 12px rgba(0, 0, 0, 0.6),
-    0 24px 50px -30px rgba(21, 21, 21, 0.55);
+    var(--shadow-prop);
 }
 
 /* Split-flap tile */
@@ -171,8 +220,7 @@ html.lenis body {
   text-shadow: 0 0 0.6px rgba(28, 28, 28, 0.55);
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.8) inset,
-    0 2px 4px rgba(21, 21, 21, 0.06),
-    0 30px 50px -30px rgba(21, 21, 21, 0.45);
+    var(--shadow-prop);
 }
 
 /* Link underline reveal */
@@ -189,11 +237,32 @@ html.lenis body {
   background: currentColor;
   transform: scaleX(0);
   transform-origin: right;
-  transition: transform 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+  transition: transform 0.3s cubic-bezier(0.77, 0, 0.175, 1);
 }
 .link-reveal:hover::after {
   transform: scaleX(1);
   transform-origin: left;
+}
+
+/* Skeleton shimmer: slow and faint, so it reads as "arriving", not as content */
+.skeleton-shimmer {
+  background-image: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.07) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+@keyframes shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
+/* Checkmark that draws itself on (copy email) */
+.check-draw {
+  stroke-dasharray: 16;
+  stroke-dashoffset: 16;
+  animation: check-draw 300ms ease-out 80ms forwards;
+}
+@keyframes check-draw {
+  to { stroke-dashoffset: 0; }
 }
 
 .tabular {
@@ -202,10 +271,6 @@ html.lenis body {
 
 /* In-flight entertainment screen (components/InflightEntertainment.tsx) */
 @keyframes eq {
-  0%, 100% { height: 30%; }
-  50% { height: 100%; }
-}
-@keyframes fadein {
-  from { opacity: 0; transform: scale(0.97); }
-  to { opacity: 1; transform: none; }
+  0%, 100% { transform: scaleY(0.3); }
+  50% { transform: scaleY(1); }
 }

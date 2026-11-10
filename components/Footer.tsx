@@ -11,10 +11,10 @@ export default function Footer() {
         </Hand>
         <div className="flex gap-6">
           <a href="https://www.linkedin.com/in/jaimerabazo" target="_blank" rel="noreferrer" className="hover:text-ink-900 link-reveal">
-            LinkedIn
+            LinkedIn<span className="sr-only"> (opens in a new tab)</span>
           </a>
           <a href="https://github.com/jaimerabazo" target="_blank" rel="noreferrer" className="hover:text-ink-900 link-reveal">
-            GitHub
+            GitHub<span className="sr-only"> (opens in a new tab)</span>
           </a>
           <a href="mailto:jaime.rabazofernandez@gmail.com" className="hover:text-ink-900 link-reveal">
             Email

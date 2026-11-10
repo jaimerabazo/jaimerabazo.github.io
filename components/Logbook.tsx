@@ -99,7 +99,7 @@ export default function Logbook() {
         <div className="mt-12 space-y-6">
           {entries.map((e) => (
             <Reveal key={e.company} amount={0.1}>
-              <article className="relative grid gap-6 rounded-2xl border border-ink-900/10 bg-paper-light p-6 pl-8 md:grid-cols-[1fr_15rem] md:gap-10 md:p-10 md:pl-14 shadow-[0_20px_40px_-34px_rgba(21,21,21,0.5)]">
+              <article className="relative grid gap-6 rounded-2xl border border-ink-900/10 bg-paper-light p-6 pl-8 md:grid-cols-[1fr_15rem] md:gap-10 md:p-10 md:pl-14">
                 {/* notebook margin rule */}
                 <span aria-hidden className="absolute inset-y-0 left-4 md:left-8 w-px bg-signal/40" />
                 <div>
@@ -160,17 +160,22 @@ export default function Logbook() {
                 </p>
                 <h4 className="mt-3 font-serif text-[1.65rem] leading-tight text-ink-900">
                   {q.title}
-                  {q.href && <span className="ml-2 text-base text-ink-400 group-hover:text-pen">↗</span>}
+                  {q.href && (
+                    <>
+                      <span aria-hidden className="ml-2 inline-block text-base text-ink-400 transition-[color,transform] duration-200 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-pen">↗</span>
+                      <span className="sr-only"> (opens in a new tab)</span>
+                    </>
+                  )}
                 </h4>
                 <p className="mt-2 text-[15px] leading-relaxed text-ink-600">{q.text}</p>
               </>
             );
             const cls =
-              "group relative block h-full rounded-2xl border border-ink-900/10 bg-paper-light p-6 transition-transform";
+              "group relative block h-full rounded-2xl border border-ink-900/10 bg-paper-light p-6 transition-colors duration-200";
             return (
               <Reveal key={q.title} delay={i * 0.06} className="h-full">
                 {q.href ? (
-                  <a href={q.href} target="_blank" rel="noreferrer" className={`${cls} hover:-rotate-1`}>
+                  <a href={q.href} target="_blank" rel="noreferrer" className={`${cls} shadow-card hover:border-ink-900/25`}>
                     {body}
                   </a>
                 ) : (

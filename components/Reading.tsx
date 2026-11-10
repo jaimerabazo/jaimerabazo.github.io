@@ -1,6 +1,6 @@
 "use client";
 
-import { useScroll } from "framer-motion";
+import { motion, useScroll } from "framer-motion";
 import { useRef } from "react";
 import reading from "@/public/data/reading.json";
 import { Hand } from "./Doodles";
@@ -22,13 +22,19 @@ export default function Reading() {
   if (!book) return null;
 
   return (
-    <section ref={ref} aria-label="In-flight reading" className="relative h-[320vh]">
+    <section ref={ref} aria-label="In-flight reading" className="relative h-[220vh]">
       <div className="sticky top-0 grid h-[100svh] grid-rows-[minmax(0,1fr)_auto] gap-6 pb-10 pt-24 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:grid-rows-1 lg:items-center lg:gap-12 lg:py-20">
         <div
           className="relative order-2 flex min-w-0 flex-col pl-6 lg:order-1 lg:pl-8"
         >
           {/* navy spine, matching the boarding pass livery */}
-          <span aria-hidden className="absolute inset-y-0 left-0 w-1.5 rounded-full bg-livery" />
+          <span aria-hidden className="absolute inset-y-0 left-0 w-1.5 overflow-hidden rounded-full bg-livery">
+            {/* fills gold as you scroll through the scene, so it's clear it's going somewhere */}
+            <motion.span
+              className="absolute inset-0 origin-top rounded-full bg-livery-gold"
+              style={{ scaleY: scrollYProgress }}
+            />
+          </span>
 
           <p className="whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.14em] text-ink-500 sm:text-[11px] sm:tracking-[0.2em]">
             In-flight reading <span className="text-livery-gold">●</span> now
@@ -42,7 +48,7 @@ export default function Reading() {
           <p className="mt-3 text-[14px] text-ink-600 sm:text-[15px]">by {book.author}</p>
 
           <div className="mt-5 flex flex-wrap items-end gap-x-5 gap-y-1">
-            <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-400">
+            <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-500">
               Since {since(book.added)} · via Goodreads
             </span>
             {others.length > 0 && (
