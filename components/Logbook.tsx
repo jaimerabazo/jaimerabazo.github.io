@@ -99,7 +99,7 @@ export default function Logbook() {
         <div className="mt-12 space-y-6">
           {entries.map((e) => (
             <Reveal key={e.company} amount={0.1}>
-              <article className="relative grid gap-6 rounded-2xl border border-ink-900/10 bg-paper-light p-6 pl-8 md:grid-cols-[1fr_15rem] md:gap-10 md:p-10 md:pl-14 shadow-[0_20px_40px_-34px_rgba(21,21,21,0.5)]">
+              <article className="relative grid gap-6 rounded-2xl border border-ink-900/10 bg-paper-light p-6 pl-8 md:grid-cols-[1fr_15rem] md:gap-10 md:p-10 md:pl-14 shadow-card">
                 {/* notebook margin rule */}
                 <span aria-hidden className="absolute inset-y-0 left-4 md:left-8 w-px bg-signal/40" />
                 <div>

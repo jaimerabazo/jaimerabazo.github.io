@@ -146,7 +146,7 @@ function FilmsChannel({ index, onPick }: { index: number; onPick: (i: number) =>
           key={film.poster}
           src={film.poster}
           alt={`Poster of ${film.title}`}
-          className="mx-auto aspect-[2/3] w-full max-w-[10rem] rounded-lg shadow-[0_18px_40px_-18px_rgba(0,0,0,0.9)] sm:max-w-[12rem]"
+          className="mx-auto aspect-[2/3] w-full max-w-[10rem] rounded-lg shadow-art sm:max-w-[12rem]"
         />
         <p className={clsx(LABEL, "mt-4")}>{film.watched ? `Watched ${watchedOn(film.watched)}` : "Watched"}</p>
         <p className="mt-1 font-serif text-[1.35rem] leading-tight">
@@ -310,7 +310,7 @@ export default function InflightEntertainment() {
       </div>
 
       {/* Seat-back shell around the screen, in the seat's colours */}
-      <div className="rounded-[34px] bg-[linear-gradient(160deg,#f4f2ed,#dcd8d0)] p-3 shadow-[0_30px_60px_-35px_rgba(21,21,21,0.6),inset_0_1px_0_rgba(255,255,255,0.8)] sm:p-4 lg:order-1">
+      <div className="rounded-[34px] bg-[linear-gradient(160deg,#f4f2ed,#dcd8d0)] p-3 [box-shadow:var(--shadow-prop),inset_0_1px_0_rgba(255,255,255,0.8)] sm:p-4 lg:order-1">
         <div className="rounded-[24px] bg-[#0c0d10] p-2 shadow-[inset_0_2px_6px_rgba(0,0,0,0.8)] sm:p-2.5">
           <div
             className="relative overflow-hidden rounded-[18px] bg-[#10141f] text-paper-light"
@@ -368,7 +368,7 @@ export default function InflightEntertainment() {
                       key={song.cover}
                       src={song.cover}
                       alt={`Cover of ${song.album ?? song.title}`}
-                      className="mx-auto aspect-square w-full max-w-[15rem] rounded-xl shadow-[0_18px_40px_-18px_rgba(0,0,0,0.9)] sm:max-w-none"
+                      className="mx-auto aspect-square w-full max-w-[15rem] rounded-xl shadow-art sm:max-w-none"
                     />
                     <p role="status" className={clsx(LABEL, "mt-4 flex items-center gap-2", failed ? "text-[#ff8a65]" : "text-white/60")}>
                       {playing && !buffering ? <Bars /> : null}
@@ -415,7 +415,7 @@ export default function InflightEntertainment() {
                         aria-busy={buffering}
                         onClick={toggle}
                         disabled={!song.preview}
-                        className="grid h-12 w-12 place-items-center rounded-full bg-paper-light text-livery transition-[background-color,box-shadow] duration-150 ease-out hover:bg-white active:shadow-[inset_0_2px_5px_rgba(21,21,21,0.3)] disabled:opacity-40"
+                        className="grid h-12 w-12 place-items-center rounded-full bg-paper-light text-livery transition-[background-color,box-shadow] duration-150 ease-out hover:bg-white active:shadow-pressed disabled:opacity-40"
                       >
                         {buffering ? (
                           <svg viewBox="0 0 24 24" className="h-5 w-5 animate-[spin_0.8s_cubic-bezier(0.4,0,0.2,1)_infinite]" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden>

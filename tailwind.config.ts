@@ -38,6 +38,12 @@ const config: Config = {
           gold: "#d9b45f",
         },
       },
+      boxShadow: {
+        card: "var(--shadow-card)",
+        prop: "var(--shadow-prop)",
+        art: "var(--shadow-art)",
+        pressed: "var(--shadow-pressed)",
+      },
       letterSpacing: {
         tightest: "-0.04em",
         tighter: "-0.03em",
