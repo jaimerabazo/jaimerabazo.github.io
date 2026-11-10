@@ -1,34 +1,39 @@
 import type { Metadata } from "next";
-import { Instrument_Sans, Instrument_Serif, JetBrains_Mono, Caveat } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
-const sans = Instrument_Sans({
-  subsets: ["latin"],
+// Self-hosted (not next/font/google): dev and CI shouldn't depend on reaching
+// Google Fonts over the network. Each file is the Latin-subset woff2 Google
+// itself serves for these families; variable ones cover their full weight range.
+const sans = localFont({
+  src: "../public/fonts/instrument-sans-variable.woff2",
+  weight: "400 700",
   variable: "--font-sans",
   display: "swap",
 });
 
-const serif = Instrument_Serif({
-  subsets: ["latin"],
-  weight: "400",
-  style: ["normal", "italic"],
+const serif = localFont({
+  src: [
+    { path: "../public/fonts/instrument-serif-regular.woff2", weight: "400", style: "normal" },
+    { path: "../public/fonts/instrument-serif-italic.woff2", weight: "400", style: "italic" },
+  ],
   variable: "--font-serif",
   display: "swap",
 });
 
-const mono = JetBrains_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500", "700"],
+const mono = localFont({
+  src: "../public/fonts/jetbrains-mono-variable.woff2",
+  weight: "400 700",
   variable: "--font-mono",
   display: "swap",
 });
 
-const hand = Caveat({
-  subsets: ["latin"],
-  weight: ["500", "700"],
+const hand = localFont({
+  src: "../public/fonts/caveat-variable.woff2",
+  weight: "500 700",
   variable: "--font-hand",
   display: "swap",
 });

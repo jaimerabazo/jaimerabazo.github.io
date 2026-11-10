@@ -3,6 +3,14 @@
 import { useEffect } from "react";
 import Lenis from "lenis";
 
+// Stashed on window so components outside this tree (e.g. the mobile nav
+// overlay) can stop/start scrolling without threading the instance through props.
+declare global {
+  interface Window {
+    __lenis?: Lenis;
+  }
+}
+
 export default function SmoothScroll() {
   useEffect(() => {
     const lenis = new Lenis({
@@ -12,6 +20,7 @@ export default function SmoothScroll() {
       wheelMultiplier: 1,
       touchMultiplier: 1.5,
     });
+    window.__lenis = lenis;
 
     function raf(time: number) {
       lenis.raf(time);
@@ -37,6 +46,7 @@ export default function SmoothScroll() {
     return () => {
       document.removeEventListener("click", handler);
       lenis.destroy();
+      window.__lenis = undefined;
     };
   }, []);
 

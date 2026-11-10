@@ -43,6 +43,23 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Lock scrolling (Lenis and the page itself) behind the full-screen menu,
+  // and give keyboard/switch-control users an Escape exit.
+  useEffect(() => {
+    if (!open) return;
+    window.__lenis?.stop();
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      window.__lenis?.start();
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
   return (
     <>
       <motion.header
