@@ -48,7 +48,7 @@ export default function Reading() {
           <p className="mt-3 text-[14px] text-ink-600 sm:text-[15px]">by {book.author}</p>
 
           <div className="mt-5 flex flex-wrap items-end gap-x-5 gap-y-1">
-            <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-400">
+            <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-500">
               Since {since(book.added)} · via Goodreads
             </span>
             {others.length > 0 && (

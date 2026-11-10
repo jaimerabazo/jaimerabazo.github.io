@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Instrument_Sans, Instrument_Serif, JetBrains_Mono, Caveat } from "next/font/google";
 import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
@@ -50,6 +50,11 @@ export const metadata: Metadata = {
     url: SITE_URL,
     type: "website",
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#f3efe6",
+  colorScheme: "light",
 };
 
 export default function RootLayout({

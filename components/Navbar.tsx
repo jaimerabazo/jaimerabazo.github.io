@@ -115,7 +115,7 @@ export default function Navbar() {
                   {l.lounge && <Sofa className="-my-1 h-6 w-6" />}
                   {l.label}
                   {l.plain && (
-                    <span className="mt-0.5 text-[10px] normal-case leading-none tracking-[0.04em] text-ink-400 group-hover:text-ink-600">
+                    <span className="mt-0.5 text-[10px] normal-case leading-none tracking-[0.04em] text-ink-500 group-hover:text-ink-700">
                       {l.plain}
                     </span>
                   )}

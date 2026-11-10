@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 :root {
+  color-scheme: light;
   --paper: #f3efe6;
   --ink: #151515;
   --pen: #2c49b8;

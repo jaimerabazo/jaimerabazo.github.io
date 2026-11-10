@@ -225,7 +225,7 @@ export default function InflightEntertainment() {
             <p className="mt-3 font-serif text-[1.6rem] leading-[1.08] text-ink-900 sm:text-[2.2rem]">{copy.title}</p>
             <p className="mt-3 max-w-md text-[15px] leading-relaxed text-ink-600">{copy.body}</p>
             <div className="mt-5 flex flex-wrap items-end gap-x-5 gap-y-1">
-              <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-400">{copy.meta}</span>
+              <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-500">{copy.meta}</span>
               <Hand as="span" mode="time" delay={0.3} className="text-[1.1rem]">
                 {copy.note}
               </Hand>
