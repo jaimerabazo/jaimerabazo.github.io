@@ -150,7 +150,13 @@ export default function InflightEntertainment() {
   const [filmIndex, setFilmIndex] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [elapsed, setElapsed] = useState(0);
+  // Set when a preview refuses to play (expired URL, network), cleared per song.
+  const [failed, setFailed] = useState(false);
   const song = songs[index];
+  const fail = () => {
+    setPlaying(false);
+    setFailed(true);
+  };
 
   // Swap the preview when the song changes; keep playing if it was.
   useEffect(() => {
@@ -158,7 +164,8 @@ export default function InflightEntertainment() {
     if (!el || !song?.preview) return;
     el.src = song.preview;
     setElapsed(0);
-    if (playing) el.play().catch(() => setPlaying(false));
+    setFailed(false);
+    if (playing) el.play().catch(fail);
     // `playing` is read, not watched: toggling play must not reload the song.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index]);
@@ -172,7 +179,12 @@ export default function InflightEntertainment() {
       el.pause();
       setPlaying(false);
     } else {
-      el.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
+      el.play()
+        .then(() => {
+          setPlaying(true);
+          setFailed(false);
+        })
+        .catch(fail);
     }
   };
   const go = (i: number, play = playing) => {
@@ -269,9 +281,17 @@ export default function InflightEntertainment() {
                       alt={`Cover of ${song.album ?? song.title}`}
                       className="mx-auto aspect-square w-full max-w-[15rem] animate-[fadein_0.5s_ease-out] rounded-xl object-cover shadow-[0_18px_40px_-18px_rgba(0,0,0,0.9)] sm:max-w-none"
                     />
-                    <p className={clsx(LABEL, "mt-4 flex items-center gap-2 text-white/50")}>
+                    <p role="status" className={clsx(LABEL, "mt-4 flex items-center gap-2", failed ? "text-[#ff8a65]" : "text-white/50")}>
                       {playing ? <Bars /> : null}
-                      {playing ? "Now playing" : elapsed > 0 ? "Paused" : "Ready to play"}
+                      {failed
+                        ? "Preview unavailable, try the next song"
+                        : !song.preview
+                          ? "No preview for this song"
+                          : playing
+                            ? "Now playing"
+                            : elapsed > 0
+                              ? "Paused"
+                              : "Ready to play"}
                     </p>
                     <p className="mt-1 truncate font-serif text-[1.35rem] leading-tight">
                       {song.title}

@@ -1,17 +1,18 @@
 "use client";
 
-import { ComponentProps, useEffect, useState } from "react";
+import { ComponentProps, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import clsx from "clsx";
 import { Doodle, ICONS } from "./Doodles";
 
-const links: { href: string; label: string; lounge?: boolean }[] = [
-  { href: "#departures", label: "Departures" },
-  { href: "#logbook", label: "Logbook" },
-  { href: "#route", label: "Route" },
-  { href: "#packing", label: "Packing list" },
+// `plain` spells out what each themed label means for someone skimming.
+const links: { href: string; label: string; plain?: string; lounge?: boolean }[] = [
+  { href: "#departures", label: "Departures", plain: "timeline" },
+  { href: "#logbook", label: "Logbook", plain: "experience" },
+  { href: "#route", label: "Route", plain: "education" },
+  { href: "#packing", label: "Packing list", plain: "skills" },
   { href: "#contact", label: "Book a call" },
   // Its own page, not a section: set apart in blue pen with a sofa.
   { href: "/lounge/", label: "Lounge", lounge: true },
@@ -33,8 +34,14 @@ const CV_SRC = `${process.env.NEXT_PUBLIC_BASE_PATH || ""}/cv/Jaime-Rabazo-CV.pd
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
   // Section anchors live on the home page; from other pages, go there first.
-  const home = usePathname() === "/";
+  const pathname = usePathname();
+  const home = pathname === "/";
+  // Only real pages (the lounge) can be current; section anchors cannot.
+  const trim = (p: string) => p.replace(/\/$/, "");
+  const isCurrent = (href: string) => !href.startsWith("#") && trim(pathname) === trim(href);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -44,16 +51,33 @@ export default function Navbar() {
   }, []);
 
   // Lock scrolling (Lenis and the page itself) behind the full-screen menu,
-  // and give keyboard/switch-control users an Escape exit.
+  // and give keyboard/switch-control users an Escape exit. Focus moves into
+  // the menu and Tab cycles between its links and the close button.
   useEffect(() => {
     if (!open) return;
     window.__lenis?.stop();
     document.body.style.overflow = "hidden";
+    const focusables = () => [
+      toggleRef.current,
+      ...Array.from(menuRef.current?.querySelectorAll<HTMLElement>("a[href]") ?? []),
+    ].filter((el): el is HTMLElement => !!el);
+    const first = requestAnimationFrame(() => focusables()[1]?.focus());
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") {
+        setOpen(false);
+        toggleRef.current?.focus();
+        return;
+      }
+      if (e.key !== "Tab") return;
+      const els = focusables();
+      const i = els.indexOf(document.activeElement as HTMLElement);
+      const next = e.shiftKey ? (i <= 0 ? els.length - 1 : i - 1) : (i + 1) % els.length;
+      e.preventDefault();
+      els[next]?.focus();
     };
     window.addEventListener("keydown", onKey);
     return () => {
+      cancelAnimationFrame(first);
       window.__lenis?.start();
       document.body.style.overflow = "";
       window.removeEventListener("keydown", onKey);
@@ -82,13 +106,19 @@ export default function Navbar() {
                 <Go
                   href={l.href}
                   home={home}
+                  aria-current={isCurrent(l.href) ? "page" : undefined}
                   className={clsx(
                     "transition-colors link-reveal",
-                    l.lounge ? "inline-flex items-center gap-1.5 text-pen hover:text-ink-900" : "text-ink-600 hover:text-ink-900"
+                    l.lounge ? "inline-flex items-center gap-1.5 text-pen hover:text-ink-900" : "group inline-flex flex-col text-ink-600 hover:text-ink-900"
                   )}
                 >
                   {l.lounge && <Sofa className="-my-1 h-6 w-6" />}
                   {l.label}
+                  {l.plain && (
+                    <span className="mt-0.5 text-[10px] normal-case leading-none tracking-[0.04em] text-ink-400 group-hover:text-ink-600">
+                      {l.plain}
+                    </span>
+                  )}
                 </Go>
               </li>
             ))}
@@ -100,19 +130,21 @@ export default function Navbar() {
               download
               className="inline-flex items-center rounded-full border border-ink-900/20 text-ink-900 text-[13px] font-medium px-4 py-2 hover:border-ink-900/40 transition-colors"
             >
-              CV ↓
+              Download CV
             </a>
             <a
               href="mailto:jaime.rabazofernandez@gmail.com"
               className="inline-flex items-center rounded-full bg-ink-900 text-paper text-[13px] font-medium px-4 py-2 hover:bg-pen transition-colors"
             >
-              Get in touch
+              Email me
             </a>
           </div>
 
           <button
-            aria-label="Toggle menu"
+            ref={toggleRef}
+            aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
+            aria-controls="mobile-menu"
             className="lg:hidden p-2 -mr-2"
             onClick={() => setOpen((v) => !v)}
           >
@@ -128,6 +160,8 @@ export default function Navbar() {
       <AnimatePresence>
         {open && (
           <motion.div
+            ref={menuRef}
+            id="mobile-menu"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -146,16 +180,20 @@ export default function Navbar() {
                     href={l.href}
                     home={home}
                     onClick={() => setOpen(false)}
-                    className={clsx("font-serif text-4xl", l.lounge ? "inline-flex items-center gap-3 text-pen" : "text-ink-900")}
+                    aria-current={isCurrent(l.href) ? "page" : undefined}
+                    className={clsx("font-serif text-4xl", l.lounge ? "inline-flex items-center gap-3 text-pen" : "flex flex-col items-center text-ink-900")}
                   >
                     {l.lounge && <Sofa className="h-10 w-10" />}
                     {l.label}
+                    {l.plain && (
+                      <span className="mt-1 font-mono text-[11px] uppercase tracking-[0.16em] text-ink-500">{l.plain}</span>
+                    )}
                   </Go>
                 </motion.li>
               ))}
               <li className="mt-6 flex gap-3">
                 <a href="mailto:jaime.rabazofernandez@gmail.com" onClick={() => setOpen(false)} className="rounded-full bg-ink-900 text-paper px-6 py-3 text-sm font-medium">
-                  Get in touch
+                  Email me
                 </a>
                 <a href={CV_SRC} download onClick={() => setOpen(false)} className="rounded-full border border-ink-900/20 text-ink-900 px-6 py-3 text-sm font-medium">
                   Download CV

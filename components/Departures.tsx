@@ -59,13 +59,14 @@ export default function Departures() {
               const cells = (
                 <>
                   <span role="cell" className="text-paper/70 tabular">{r.when}</span>
-                  <span role="cell" className="min-w-0">
-                    <SplitFlap text={r.to} delay={i * 0.08} className="block truncate text-flap" />
-                    <span className="mt-1 block truncate text-[11px] text-paper/50 md:hidden">
+                  {/* Wraps on phones instead of cutting text off; truncates (with a tooltip) on desktop. */}
+                  <span role="cell" className="min-w-0" title={r.to}>
+                    <SplitFlap text={r.to} delay={i * 0.08} className="block text-flap max-md:whitespace-normal md:truncate" />
+                    <span className="mt-1 block text-[11px] text-paper/50 md:hidden">
                       {r.as}
                     </span>
                   </span>
-                  <span role="cell" className="hidden md:block truncate text-paper/70">
+                  <span role="cell" className="hidden md:block truncate text-paper/70" title={r.as}>
                     {r.as}
                   </span>
                   <span role="cell" className={`text-right ${statusColor[r.status]}`}>
