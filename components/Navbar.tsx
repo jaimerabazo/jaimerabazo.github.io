@@ -29,7 +29,7 @@ function Go({ href, home, ...rest }: { href: string; home: boolean } & Omit<Comp
   return <Link href={href.startsWith("#") ? `/${href}` : href} {...rest} />;
 }
 
-const CV_SRC = `${process.env.NEXT_PUBLIC_BASE_PATH || ""}/cv/Jaime-Rabazo-CV.pdf`;
+const CV_SRC = `${process.env.NEXT_PUBLIC_BASE_PATH || ""}/cv/jaimeRabazoENG.pdf`;
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
