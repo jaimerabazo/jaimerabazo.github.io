@@ -12,9 +12,23 @@ type Entry = {
   bullets: string[];
   stack: string[];
   margin: string;
+  href?: string;
 };
 
 const entries: Entry[] = [
+  {
+    period: "Nov 2026 — Present",
+    role: "Software Engineer",
+    company: "Gestanex",
+    summary: "Full-stack engineering on a multi-tenant SaaS used by accounting firms.",
+    bullets: [
+      "Own a **new business line** for employee time tracking used by accounting firms and their clients.",
+      "Building full-stack features across the **multi-tenant** platform with Next.js, TypeScript and Prisma/Postgres.",
+    ],
+    stack: ["Next.js", "TypeScript", "Prisma", "Postgres"],
+    margin: "A step in ownership!",
+    href: "https://gestanex.io"
+  },
   {
     period: "Feb — Aug 2026",
     role: "Bid Manager",
@@ -109,15 +123,33 @@ export default function Logbook() {
                   <h3 className="mt-2 font-serif text-[2rem] md:text-[2.5rem] leading-[1.05] text-ink-900">
                     {e.role}{" "}
                     <span className="italic text-ink-500">at</span>{" "}
-                    <span className="relative inline-block">
-                      {e.company}
-                      <Doodle
-                        paths={UNDERLINE}
-                        viewBox="0 0 200 18"
-                        className="absolute -bottom-2 left-0 h-3 w-full"
-                        delay={0.3}
-                      />
-                    </span>
+                    {(() => {
+                      const name = (
+                        <span className="relative inline-block">
+                          {e.company}
+                          <Doodle
+                            paths={UNDERLINE}
+                            viewBox="0 0 200 18"
+                            className="absolute -bottom-2 left-0 h-3 w-full"
+                            delay={0.3}
+                          />
+                        </span>
+                      );
+                      return e.href ? (
+                        <a
+                          href={e.href}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="group transition-colors duration-200 hover:text-pen"
+                        >
+                          {name}
+                          <span aria-hidden className="ml-1 inline-block text-[0.5em] align-super text-ink-400 transition-[color,transform] duration-200 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-pen">↗</span>
+                          <span className="sr-only"> (opens in a new tab)</span>
+                        </a>
+                      ) : (
+                        name
+                      );
+                    })()}
                   </h3>
                   <p className="mt-4 max-w-2xl text-ink-600 leading-relaxed">{e.summary}</p>
                   <ul className="mt-6 space-y-3 max-w-2xl text-[17px] leading-relaxed text-ink-700">

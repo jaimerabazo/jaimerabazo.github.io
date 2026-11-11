@@ -84,17 +84,16 @@ export default function Hero() {
               transition={{ duration: 0.6, delay: 0.15, ease }}
             >
               <p className="mt-10 max-w-xl font-serif text-[1.75rem] md:text-[2.15rem] leading-[1.15] text-ink-900">
-                I studied computer science and business at the same time.{" "}
+                CS + Business graduate.{" "}
                 <span className="italic text-ink-600">
-                  Mostly, I learned to translate between them.
+                  Mostly, learning to translate between them.
                 </span>
               </p>
               <p className="mt-6 max-w-xl text-[17px] leading-relaxed text-ink-600">
-                At Telefónica I built ML that forecasts KPIs across Spain&apos;s
-                mobile network, and automated the work around it, giving a
-                20-person team back{" "}
+                Built ML models across Spain&apos;s
+                mobile network, now{" "}
                 <span className="relative inline-block whitespace-nowrap font-medium text-ink-900">
-                  ~160 hours a month
+                  running nationwide
                   <Doodle
                     paths={CIRCLE}
                     viewBox="0 0 200 64"
@@ -105,9 +104,12 @@ export default function Hero() {
                     className="pointer-events-none absolute -left-2 -top-2 h-[calc(100%+1rem)] w-[calc(100%+1rem)]"
                   />
                 </span>
-                , now running nationwide. Then at Telefónica Tech I built an AI
-                tool for public tenders. Looking for the next place to do that
-                kind of work.
+                . Also built an AI tool for public tenders. Now I&apos;m a software engineer at
+                Gestanex, building a new product line for accounting firms end
+                to end. {" "}
+                <span className="italic text-ink-600">
+                  Always open to the next challenge.
+                </span>
               </p>
 
               <div className="mt-9 flex flex-wrap items-center gap-3">

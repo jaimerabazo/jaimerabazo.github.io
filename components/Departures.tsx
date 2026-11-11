@@ -15,13 +15,14 @@ type Row = {
 // Newest first, like a real board.
 const rows: Row[] = [
   { when: "NEXT", to: "YOUR TEAM?", as: "DATA · AI · STRATEGY", status: "BOARDING", href: "#contact" },
+  { when: "2026–", to: "GESTANEX", as: "SOFTWARE ENGINEER", status: "ON BOARD" },
   { when: "2026", to: "TELEFÓNICA TECH", as: "BID MANAGER", status: "ARRIVED" },
   { when: "2025–26", to: "TELEFÓNICA", as: "NETWORK AUTOMATION ENG.", status: "ARRIVED" },
-  { when: "2025", to: "COPENHAGEN · CBS", as: "BBA EXCHANGE", status: "ARRIVED" },
-  { when: "2024–", to: "ESN UC3M", as: "TREASURER", status: "ON BOARD" },
-  { when: "2023–24", to: "BOSTON · NORTHEASTERN", as: "CS + BBA EXCHANGE", status: "ARRIVED" },
-  { when: "2022–26", to: "MADRID · UC3M", as: "CS + BUSINESS DEGREES", status: "ARRIVED" },
-  { when: "2020–22", to: "MADRID · UPM", as: "ENGINEERING + BUSINESS", status: "ARRIVED" },
+  { when: "2025", to: "COPENHAGEN @ CBS", as: "BBA EXCHANGE", status: "ARRIVED" },
+  { when: "2024–26", to: "ESN UC3M", as: "TREASURER", status: "ARRIVED" },
+  { when: "2023–24", to: "BOSTON @ NORTHEASTERN", as: "CS + BBA EXCHANGE", status: "ARRIVED" },
+  { when: "2022–26", to: "MADRID @ UC3M", as: "CS + BUSINESS DEGREES", status: "ARRIVED" },
+  { when: "2020–22", to: "MADRID @ UPM", as: "ENGINEERING + BUSINESS", status: "ARRIVED" },
 ];
 
 const statusColor: Record<Row["status"], string> = {

@@ -40,7 +40,7 @@ const SITE_URL = "https://jaimerabazo.github.io";
 export const metadata: Metadata = {
   title: "Jaime Rabazo — ML, AI & Technology Strategy",
   description:
-    "Jaime Rabazo Fernández — Computer Science + Business Administration (UC3M). Built production ML at Telefónica and an AI tender analysis platform at Telefónica Tech.",
+    "Jaime Rabazo Fernández — Computer Science + Business Administration (UC3M). Software Engineer at Gestanex. Previously built production ML at Telefónica and an AI tender analysis platform at Telefónica Tech.",
   metadataBase: new URL(SITE_URL),
   alternates: { canonical: "/" },
   openGraph: {
