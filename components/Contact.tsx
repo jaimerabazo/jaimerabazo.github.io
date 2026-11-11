@@ -9,7 +9,7 @@ import { CIRCLE, Doodle, Hand } from "./Doodles";
 
 const EMAIL = "jaime.rabazofernandez@gmail.com";
 const CAL_USERNAME = "jaimerabazo";
-const CV_SRC = `${process.env.NEXT_PUBLIC_BASE_PATH || ""}/cv/Jaime-Rabazo-CV.pdf`;
+const CV_SRC = `${process.env.NEXT_PUBLIC_BASE_PATH || ""}/cv/jaimeRabazoENG.pdf`;
 
 type Fare = {
   code: string;

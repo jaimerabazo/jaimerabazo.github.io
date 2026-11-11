@@ -27,7 +27,7 @@ export default function Hero() {
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
   const heroSrc = `${basePath}/images/jaime-hero.webp`;
   const frameSrc = `${basePath}/images/polaroid-frame.webp`;
-  const cvSrc = `${basePath}/cv/Jaime-Rabazo-CV.pdf`;
+  const cvSrc = `${basePath}/cv/jaimeRabazoENG.pdf`;
 
   // Photo composition: keep --inside-* and --outside-* identical and tweak
   // --outside-cut so the overlay meets the top edge of the frame.
