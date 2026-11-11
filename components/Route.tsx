@@ -20,7 +20,7 @@ const stamps = [
     city: "Madrid",
     school: "Universidad Carlos III",
     years: "2022 — 2026",
-    lines: ["B.Sc. Computer Science & Engineering", "B.A. Business Administration", "GPA 8.23 / 8.18", "Banco Santander Mobility Scholarship"],
+    lines: ["B.Sc. Computer Science & Engineering", "B.A. Business Administration", "Banco Santander Mobility Scholarship"],
     tilt: "-rotate-2",
   },
   {
@@ -41,7 +41,7 @@ const stamps = [
     city: "Madrid",
     school: "Universidad Politécnica",
     years: "2020 — 2022",
-    lines: ["Computer Engineering & Business Administration", "GPA 8.13 / 10"],
+    lines: ["Computer Engineering & Business Administration"],
     tilt: "rotate-2",
   },
 ];
